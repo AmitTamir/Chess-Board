@@ -1,32 +1,31 @@
 window.addEventListener('load', () => {
-
+    const body = document.getElementsByTagName("body")[0];
     const table = document.createElement("table");
     table.className = "table";
-    let row = document.createElement('tr');
-    table.appendChild(tr);
-    for (let i = 0; i < 8; i++) {
-        if (i % 2 === 0) {
-            let box = document.createElement('td');
-            tr.appendChild(td);
-            td.innerText("W")
-            box.className = "black";
+    for (let t = 0; t < 8; t++) {
+        let row = document.createElement('tr');
+        for (let i = 0; i < 8; i++) {
+            let cell = document.createElement('td');
+            if (t % 2 === 0) {
+                if (i % 2 === 0) {
+                    cell.className = "white";
+                }
+                else {
+                    cell.className = "black";
+                }
+            }
+            else {
+                if (i % 2 === 0) {
+                    cell.className = "black";
+                }
+                else {
+                    cell.className = "white";
+                }
+
+            }
+            table.appendChild(row);
+            row.appendChild(cell);
         }
-        else {
-            let box = document.createElement('td');
-            tr.appendChild(td);
-            box.className = "black";
-        }
+        body.appendChild(table);
     }
 });
-// let row_1 = document.createElement('tr');
-// let heading_1 = document.createElement('th');
-// heading_1.innerHTML = "Sr. No.";
-// let heading_2 = document.createElement('th');
-// heading_2.innerHTML = "Name";
-// let heading_3 = document.createElement('th');
-// heading_3.innerHTML = "Company";
-
-// row_1.appendChild(heading_1);
-// row_1.appendChild(heading_2);
-// row_1.appendChild(heading_3);
-// thead.appendChild(row_1);
