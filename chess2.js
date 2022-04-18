@@ -9,6 +9,7 @@ function cellClick(e) {
     if (selected !== undefined) {
         selected.classList.remove('clicked');
     }
+
     const moveArray = [];
     let row = 1;
     let coll = 6;
@@ -120,11 +121,11 @@ function cellClick(e) {
         moveArray.push(document.getElementById(`${row - 1}-${coll}`));
         moveArray.push(document.getElementById(`${row - 2}-${coll}`));
     }
-    // if ((e.type === " p") && (e.color === "black")) {
-    console.log("black pawn moves");
-    moveArray.push(document.getElementById(`${row + 1}-${coll}`));
-    moveArray.push(document.getElementById(`${row + 2}-${coll}`));
-    // }
+    if ((e.type === " p") && (e.color === "black")) {
+        console.log("black pawn moves");
+        moveArray.push(document.getElementById(`${row + 1}-${coll}`));
+        moveArray.push(document.getElementById(`${row + 2}-${coll}`));
+    }
 
 
     console.log(moveArray);
@@ -142,14 +143,13 @@ class piece {
 }
 function getInitialBoard() {
     let result = [];
-    result.push(new piece(0, 0, " r", "black"));
-    result.push(new piece(0, 1, " kn", "black"));
-    result.push(new piece(0, 2, " b", "black"));
-    result.push(new piece(0, 3, " q", "black"));
-    result.push(new piece(0, 4, " k", "black"));
-    result.push(new piece(0, 5, " b", "black"));
-    result.push(new piece(0, 6, " kn", "black"));
-    result.push(new piece(0, 7, " r", "black"));
+    addPieces(result, 0, "black");
+    addPieces(result, 7, "white");
+for(let i=0;i<8;i++)
+{
+    result.push(new piece(1, i, " p", "black"));
+    result.push(new piece(6, i, " p", "white"));
+}
     result.push(new piece(1, 0, " p", "black"));
     result.push(new piece(1, 1, " p", "black"));
     result.push(new piece(1, 2, " p", "black"));
@@ -158,14 +158,7 @@ function getInitialBoard() {
     result.push(new piece(1, 5, " p", "black"));
     result.push(new piece(1, 6, " p", "black"));
     result.push(new piece(1, 7, " p", "black"));
-    result.push(new piece(7, 0, " r", "white"));
-    result.push(new piece(7, 1, " kn", "white"));
-    result.push(new piece(7, 2, " b", "white"));
-    result.push(new piece(7, 3, " q", "white"));
-    result.push(new piece(7, 4, " k", "white"));
-    result.push(new piece(7, 5, " b", "white"));
-    result.push(new piece(7, 6, " kn", "white"));
-    result.push(new piece(7, 7, " r", "white"));
+
     result.push(new piece(6, 0, " p", "white"));
     result.push(new piece(6, 1, " p", "white"));
     result.push(new piece(6, 2, " p", "white"));
@@ -176,6 +169,17 @@ function getInitialBoard() {
     result.push(new piece(6, 7, " p", "white"));
     return result;
 }
+function addPieces(result, row, color) {
+    result.push(new piece(row, 0, " r", color));
+    result.push(new piece(row, 1, " kn", color));
+    result.push(new piece(row, 2, " b", color));
+    result.push(new piece(row, 3, " q", color));
+    result.push(new piece(row, 4, " k", color));
+    result.push(new piece(row, 5, " b", color));
+    result.push(new piece(row, 6, " kn", color));
+    result.push(new piece(row, 7, " r", color));
+}
+
 function createChessBoard() {
     const body = document.getElementsByTagName("body")[0];
     const board = document.createElement("table");
