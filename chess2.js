@@ -1,8 +1,12 @@
 let selected;
 let pieces = [];
 let board;
-
-
+let boardData;
+class BoardData {
+    constructor(pieces) {
+        this.pieces = pieces;
+    }
+}
 class piece {
     constructor(row, coll, type, color) {
         this.row = row;
@@ -45,6 +49,11 @@ function cellClick(e, row, coll) {
             }
             else if (piece.type === " k") {
                 let possibleMoves = getKingMoves(row, coll);
+                console.log(possibleMoves);
+            }
+            else if (piece.type === " kn") {
+                let possibleMoves = getKnightMoves(row, coll);
+                console.log(possibleMoves);
             }
         }
     }
@@ -130,11 +139,85 @@ function getBlackPawnMoves(row, coll) {
 }
 function getKingMoves(row, coll) {
     const moveArray = [];
+    temp1 = coll + 1;
+    temp2 = coll - 1;
     console.log("King moves");
-    let temp1 = coll + 1;
-    let temp2 = coll - 1;
-   
-    
+    if (row - 1 > -1 && temp1 < 8) {
+        moveArray.push(document.getElementById(`${row - 1}-${temp1}`));
+        document.getElementById(`${row - 1}-${temp1}`).classList.add("possible-move");
+    }
+    if (row - 1 > -1 && temp2 > -1) {
+        moveArray.push(document.getElementById(`${row - 1}-${temp2}`));
+        document.getElementById(`${row - 1}-${temp2}`).classList.add("possible-move");
+    }
+    if (row + 1 < 8 && temp1 < 8) {
+        moveArray.push(document.getElementById(`${row + 1}-${temp1}`));
+        document.getElementById(`${row + 1}-${temp1}`).classList.add("possible-move");
+    }
+    if (row + 1 < 8 && temp2 > -1) {
+        moveArray.push(document.getElementById(`${row + 1}-${temp2}`));
+        document.getElementById(`${row + 1}-${temp2}`).classList.add("possible-move");
+    }
+    if (temp1 < 8) {
+        moveArray.push(document.getElementById(`${row}-${temp1}`));
+        document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
+    }
+    if (temp2 > -1) {
+        moveArray.push(document.getElementById(`${row}-${temp2}`));
+        document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
+    }
+    if (row - 1 > -1) {
+        moveArray.push(document.getElementById(`${row - 1}-${coll}`));
+        document.getElementById(`${row - 1}-${coll}`).classList.add("possible-move");
+    }
+    if (row + 1 < 8) {
+        moveArray.push(document.getElementById(`${row + 1}-${coll}`));
+        document.getElementById(`${row + 1}-${coll}`).classList.add("possible-move");
+    }
+    return moveArray;
+}
+function getKnightMoves(row, coll) {
+    const moveArray = [];
+    if (row - 2 > -1) {
+        if (coll - 1 > -1) {
+            moveArray.push(document.getElementById(`${row - 2}-${coll - 1}`));
+            document.getElementById(`${row - 2}-${coll - 1}`).classList.add("possible-move");
+        }
+        if (coll + 1 < 8) {
+            moveArray.push(document.getElementById(`${row - 2}-${coll + 1}`));
+            document.getElementById(`${row - 2}-${coll + 1}`).classList.add("possible-move");
+        }
+    }
+    if (coll + 2 < 8) {
+        if (row - 1 > -1) {
+            moveArray.push(document.getElementById(`${row - 1}-${coll + 2}`));
+            document.getElementById(`${row - 1}-${coll + 2}`).classList.add("possible-move");
+        }
+        if (row + 1 < 8) {
+            moveArray.push(document.getElementById(`${row + 1}-${coll + 2}`));
+            document.getElementById(`${row + 1}-${coll + 2}`).classList.add("possible-move");
+        }
+    }
+    if (row + 2 < 8) {
+        if (coll - 1 > -1) {
+            moveArray.push(document.getElementById(`${row + 2}-${coll - 1}`));
+            document.getElementById(`${row + 2}-${coll - 1}`).classList.add("possible-move");
+        }
+        if (coll + 1 < 8) {
+            moveArray.push(document.getElementById(`${row + 2}-${coll + 1}`));
+            document.getElementById(`${row + 2}-${coll + 1}`).classList.add("possible-move");
+        }
+    }
+    if (coll - 2 > -1) {
+        if (row - 1 > -1) {
+            moveArray.push(document.getElementById(`${row - 1}-${coll - 2}`));
+            document.getElementById(`${row - 1}-${coll - 2}`).classList.add("possible-move");
+        }
+        if (row + 1 < 8) {
+            moveArray.push(document.getElementById(`${row + 1}-${coll - 2}`));
+            document.getElementById(`${row + 1}-${coll - 2}`).classList.add("possible-move");
+        }
+    }
     return moveArray;
 }
 function getBishopMoves(row, coll) {
@@ -262,6 +345,8 @@ function createChessBoard() {
         body.appendChild(board);
     }
     pieces = getInitialBoard();
+    boardData = new BoardData(getInitialBoard());
+    console.log(boardData);
     for (let piece of pieces) {
         getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
     }
