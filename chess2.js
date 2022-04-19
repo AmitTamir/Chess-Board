@@ -1,138 +1,8 @@
-function getImage(cell, type, kind) {
-    const image = document.createElement("img");
-    image.src = "pieces/" + type + kind + ".png";
-    cell.appendChild(image);
-}
 let selected;
 let pieces = [];
-function cellClick(e) {
-    if (selected !== undefined) {
-        selected.classList.remove('clicked');
-    }
-
-    const moveArray = [];
-    let row = 1;
-    let coll = 6;
-    if (e.type === " b") {
-        let temp1 = coll + 1;
-        let temp2 = coll - 1;
-        for (let i = row - 1; i > -1; i--) {
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${i}-${temp1}`));
-            }
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${i}-${temp2}`));
-            }
-            temp1++;
-            temp2--;
-        }
-        temp1 = coll + 1;
-        temp2 = coll - 1;
-        for (let i = row + 1; i < 8; i++) {
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${i}-${temp1}`));
-            }
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${i}-${temp2}`));
-            }
-            temp1++;
-            temp2--;
-        }
-    }
-    if (e.type === " q") {
-        let temp1 = coll + 1;
-        let temp2 = coll - 1;
-        for (let i = row - 1; i > -1; i--) {
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${i}-${temp1}`));
-            }
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${i}-${temp2}`));
-            }
-            temp1++;
-            temp2--;
-        }
-        temp1 = coll + 1;
-        temp2 = coll - 1;
-        for (let i = row + 1; i < 8; i++) {
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${i}-${temp1}`));
-            }
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${i}-${temp2}`));
-            }
-            temp1++;
-            temp2--;
-        }
-        temp1 = coll + 1;
-        temp2 = coll - 1;
-        for (let i = 0; i < 7; i++) {
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${row}-${temp1}`));
-            }
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${row}-${temp2}`));
-            }
-            temp1++;
-            temp2--;
-        }
-        temp1 = row + 1;
-        temp2 = row - 1;
-        for (let i = 0; i < 7; i++) {
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${temp2}-${coll}`));
-            }
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${temp1}-${coll}`));
-            }
-            temp1++;
-            temp2--;
-        }
-    }
-    if (e.type === " r") {
-        console.log("rock moves");
-        temp1 = coll + 1;
-        temp2 = coll - 1;
-        for (let i = 0; i < 7; i++) {
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${row}-${temp1}`));
-            }
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${row}-${temp2}`));
-            }
-            temp1++;
-            temp2--;
-        }
-        temp1 = row + 1;
-        temp2 = row - 1;
-        for (let i = 0; i < 7; i++) {
-            if (temp2 > -1) {
-                moveArray.push(document.getElementById(`${temp2}-${coll}`));
-            }
-            if (temp1 < 8) {
-                moveArray.push(document.getElementById(`${temp1}-${coll}`));
-            }
-            temp1++;
-            temp2--;
-        }
-    }
-    if ((e.type === " p") && (e.color === "white")) {
-        console.log("white pawn moves");
-        moveArray.push(document.getElementById(`${row - 1}-${coll}`));
-        moveArray.push(document.getElementById(`${row - 2}-${coll}`));
-    }
-    if ((e.type === " p") && (e.color === "black")) {
-        console.log("black pawn moves");
-        moveArray.push(document.getElementById(`${row + 1}-${coll}`));
-        moveArray.push(document.getElementById(`${row + 2}-${coll}`));
-    }
+let board;
 
 
-    console.log(moveArray);
-    selected = e.currentTarget;
-    selected.classList.add('clicked');
-
-}
 class piece {
     constructor(row, coll, type, color) {
         this.row = row;
@@ -141,32 +11,212 @@ class piece {
         this.color = color;
     }
 }
+function cellClick(e, row, coll) {
+    if (selected !== undefined) {
+        selected.classList.remove('clicked');
+    }
+    console.log(row, coll);
+    selected = e.currentTarget;
+    selected.classList.add('clicked');
+
+
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            board.rows[i].cells[j].classList.remove('possible-move');
+        }
+    }
+
+    for (let piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            if (piece.type === " r") {
+                let possibleMoves = getRookMoves(row, coll);
+            }
+            else if (piece.type === " q") {
+                let possibleMoves = getQueenMoves(row, coll);
+            }
+            else if (piece.type === " b") {
+                let possibleMoves = getBishopMoves(row, coll);
+            }
+            else if (piece.type === " p" && piece.color === "white") {
+                let possibleMoves = getWhitePawnMoves(row, coll);
+            }
+            else if (piece.type === " p" && piece.color === "black") {
+                let possibleMoves = getBlackPawnMoves(row, coll);
+            }
+            else if (piece.type === " k") {
+                let possibleMoves = getKingMoves(row, coll);
+            }
+        }
+    }
+}
+function getQueenMoves(row, coll) {
+    const moveArray = [];
+    let temp1 = coll + 1;
+    let temp2 = coll - 1;
+    for (let i = row - 1; i > -1; i--) {
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${i}-${temp1}`));
+            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+        }
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${i}-${temp2}`));
+            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    temp1 = coll + 1;
+    temp2 = coll - 1;
+    for (let i = row + 1; i < 8; i++) {
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${i}-${temp1}`));
+            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+        }
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${i}-${temp2}`));
+            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    temp1 = coll + 1;
+    temp2 = coll - 1;
+    for (let i = 0; i < 7; i++) {
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${row}-${temp1}`));
+            document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
+        }
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${row}-${temp2}`));
+            document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    temp1 = row + 1;
+    temp2 = row - 1;
+    for (let i = 0; i < 7; i++) {
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${temp2}-${coll}`));
+            document.getElementById(`${temp2}-${coll}`).classList.add("possible-move");
+        }
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${temp1}-${coll}`));
+            document.getElementById(`${temp1}-${coll}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    return moveArray;
+}
+
+function getWhitePawnMoves(row, coll) {
+    const moveArray = [];
+    console.log("white pawn moves");
+    moveArray.push(document.getElementById(`${row - 1}-${coll}`));
+    moveArray.push(document.getElementById(`${row - 2}-${coll}`));
+    document.getElementById(`${row - 1}-${coll}`).classList.add("possible-move");
+    document.getElementById(`${row - 2}-${coll}`).classList.add("possible-move");
+    return moveArray;
+}
+function getBlackPawnMoves(row, coll) {
+    const moveArray = [];
+    console.log("black pawn moves");
+    moveArray.push(document.getElementById(`${row + 1}-${coll}`));
+    moveArray.push(document.getElementById(`${row + 2}-${coll}`));
+    document.getElementById(`${row + 1}-${coll}`).classList.add("possible-move");
+    document.getElementById(`${row + 2}-${coll}`).classList.add("possible-move");
+    return moveArray;
+}
+function getKingMoves(row, coll) {
+    const moveArray = [];
+    console.log("King moves");
+    let temp1 = coll + 1;
+    let temp2 = coll - 1;
+   
+    
+    return moveArray;
+}
+function getBishopMoves(row, coll) {
+    const moveArray = [];
+    let temp1 = coll + 1;
+    let temp2 = coll - 1;
+    for (let i = row - 1; i > -1; i--) {
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${i}-${temp1}`));
+            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+        }
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${i}-${temp2}`));
+            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    temp1 = coll + 1;
+    temp2 = coll - 1;
+    for (let i = row + 1; i < 8; i++) {
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${i}-${temp1}`));
+            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+        }
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${i}-${temp2}`));
+            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    return moveArray;
+}
+function getRookMoves(row, coll) {
+    console.log("rock moves");
+    const moveArray = [];
+    temp1 = coll + 1;
+    temp2 = coll - 1;
+    for (let i = 0; i < 7; i++) {
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${row}-${temp1}`));
+            document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
+        }
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${row}-${temp2}`));
+            document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    temp1 = row + 1;
+    temp2 = row - 1;
+    for (let i = 0; i < 7; i++) {
+        if (temp2 > -1) {
+            moveArray.push(document.getElementById(`${temp2}-${coll}`));
+            document.getElementById(`${temp2}-${coll}`).classList.add("possible-move");
+        }
+        if (temp1 < 8) {
+            moveArray.push(document.getElementById(`${temp1}-${coll}`));
+            document.getElementById(`${temp1}-${coll}`).classList.add("possible-move");
+        }
+        temp1++;
+        temp2--;
+    }
+    return moveArray;
+}
+
+function getImage(cell, type, kind) {
+    const image = document.createElement("img");
+    image.src = "pieces/" + type + kind + ".png";
+    cell.appendChild(image);
+}
+
 function getInitialBoard() {
     let result = [];
     addPieces(result, 0, "black");
     addPieces(result, 7, "white");
-for(let i=0;i<8;i++)
-{
-    result.push(new piece(1, i, " p", "black"));
-    result.push(new piece(6, i, " p", "white"));
-}
-    result.push(new piece(1, 0, " p", "black"));
-    result.push(new piece(1, 1, " p", "black"));
-    result.push(new piece(1, 2, " p", "black"));
-    result.push(new piece(1, 3, " p", "black"));
-    result.push(new piece(1, 4, " p", "black"));
-    result.push(new piece(1, 5, " p", "black"));
-    result.push(new piece(1, 6, " p", "black"));
-    result.push(new piece(1, 7, " p", "black"));
-
-    result.push(new piece(6, 0, " p", "white"));
-    result.push(new piece(6, 1, " p", "white"));
-    result.push(new piece(6, 2, " p", "white"));
-    result.push(new piece(6, 3, " p", "white"));
-    result.push(new piece(6, 4, " p", "white"));
-    result.push(new piece(6, 5, " p", "white"));
-    result.push(new piece(6, 6, " p", "white"));
-    result.push(new piece(6, 7, " p", "white"));
+    for (let i = 0; i < 8; i++) {
+        result.push(new piece(1, i, " p", "black"));
+        result.push(new piece(6, i, " p", "white"));
+    }
     return result;
 }
 function addPieces(result, row, color) {
@@ -182,7 +232,7 @@ function addPieces(result, row, color) {
 
 function createChessBoard() {
     const body = document.getElementsByTagName("body")[0];
-    const board = document.createElement("table");
+    board = document.createElement("table");
     board.className = "board";
     for (let t = 0; t < 8; t++) {
         let row = document.createElement('tr');
@@ -204,10 +254,10 @@ function createChessBoard() {
                     cell.className = "light";
                 }
             }
-            cell.addEventListener('click', cellClick);
+            cell.addEventListener('click', (e) => cellClick(e, t, i));
             board.appendChild(row);
             row.appendChild(cell);
-            cell.id = t + "-" + i
+            cell.id = t + "-" + i;
         }
         body.appendChild(board);
     }

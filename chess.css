@@ -1,7 +1,7 @@
 .board {
     width: 400px;
     height: 400px;
-    border-spacing: 0;
+    border-spacing: 1px;
     position: relative;
     border: solid black 1px;
 }
@@ -10,18 +10,22 @@
     background-color: rgb(214, 214, 214);
     width: 50px;
     height: 50px;
+    border: 1px solid black;
+
 }
 
 .dark {
     background-color: rgb(85, 84, 84);
     width: 50px;
     height: 50px;
+    border: 1px solid black;
 
 }
 
 .clicked {
     background-color: rgb(153, 153, 43);
 }
-.trclicked {
-background-color: aqua;
+
+.possible-move {
+    background-color: rgb(235, 238, 77);
 }
