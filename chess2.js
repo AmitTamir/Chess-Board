@@ -23,7 +23,6 @@ function cellClick(e, row, coll) {
     selected = e.currentTarget;
     selected.classList.add('clicked');
 
-
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
             board.rows[i].cells[j].classList.remove('possible-move');
@@ -33,151 +32,79 @@ function cellClick(e, row, coll) {
     for (let piece of pieces) {
         if (piece.row === row && piece.coll === coll) {
             if (piece.type === " r") {
-                let possibleMoves = getRookMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getRookMoves(row, coll, moveArray);
             }
             else if (piece.type === " q") {
-                let possibleMoves = getQueenMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getQueenMoves(row, coll, moveArray);
             }
             else if (piece.type === " b") {
-                let possibleMoves = getBishopMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getBishopMoves(row, coll, moveArray);
             }
             else if (piece.type === " p" && piece.color === "white") {
-                let possibleMoves = getWhitePawnMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getWhitePawnMoves(row, coll, moveArray);
             }
             else if (piece.type === " p" && piece.color === "black") {
-                let possibleMoves = getBlackPawnMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getBlackPawnMoves(row, coll, moveArray);
             }
             else if (piece.type === " k") {
-                let possibleMoves = getKingMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getKingMoves(row, coll, moveArray);
                 console.log(possibleMoves);
             }
             else if (piece.type === " kn") {
-                let possibleMoves = getKnightMoves(row, coll);
+                const moveArray = [];
+                let possibleMoves = getKnightMoves(row, coll, moveArray);
                 console.log(possibleMoves);
             }
         }
     }
 }
-function getQueenMoves(row, coll) {
-    const moveArray = [];
-    let temp1 = coll + 1;
-    let temp2 = coll - 1;
-    for (let i = row - 1; i > -1; i--) {
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${i}-${temp1}`));
-            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
-        }
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${i}-${temp2}`));
-            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
-        }
-        temp1++;
-        temp2--;
-    }
-    temp1 = coll + 1;
-    temp2 = coll - 1;
-    for (let i = row + 1; i < 8; i++) {
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${i}-${temp1}`));
-            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
-        }
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${i}-${temp2}`));
-            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
-        }
-        temp1++;
-        temp2--;
-    }
-    temp1 = coll + 1;
-    temp2 = coll - 1;
-    for (let i = 0; i < 7; i++) {
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${row}-${temp1}`));
-            document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
-        }
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${row}-${temp2}`));
-            document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
-        }
-        temp1++;
-        temp2--;
-    }
-    temp1 = row + 1;
-    temp2 = row - 1;
-    for (let i = 0; i < 7; i++) {
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${temp2}-${coll}`));
-            document.getElementById(`${temp2}-${coll}`).classList.add("possible-move");
-        }
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${temp1}-${coll}`));
-            document.getElementById(`${temp1}-${coll}`).classList.add("possible-move");
-        }
-        temp1++;
-        temp2--;
-    }
+function getQueenMoves(row, coll, moveArray) {
+    getBishopMoves(row, coll, moveArray);
+    getRookMoves(row, coll, moveArray);
     return moveArray;
 }
 
-function getWhitePawnMoves(row, coll) {
-    const moveArray = [];
+function getWhitePawnMoves(row, coll, moveArray) {
     console.log("white pawn moves");
-    moveArray.push(document.getElementById(`${row - 1}-${coll}`));
-    moveArray.push(document.getElementById(`${row - 2}-${coll}`));
-    document.getElementById(`${row - 1}-${coll}`).classList.add("possible-move");
-    document.getElementById(`${row - 2}-${coll}`).classList.add("possible-move");
+    for (let i = -1; i > -3; i--) {
+        if (row + i > -1) {
+            moveArray.push(document.getElementById(`${row + i}-${coll}`));
+            document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
+        }
+    }
     return moveArray;
 }
-function getBlackPawnMoves(row, coll) {
-    const moveArray = [];
+function getBlackPawnMoves(row, coll, moveArray) {
     console.log("black pawn moves");
-    moveArray.push(document.getElementById(`${row + 1}-${coll}`));
-    moveArray.push(document.getElementById(`${row + 2}-${coll}`));
-    document.getElementById(`${row + 1}-${coll}`).classList.add("possible-move");
-    document.getElementById(`${row + 2}-${coll}`).classList.add("possible-move");
-    return moveArray;
-}
-function getKingMoves(row, coll) {
-    const moveArray = [];
-    temp1 = coll + 1;
-    temp2 = coll - 1;
-    console.log("King moves");
-    if (row - 1 > -1 && temp1 < 8) {
-        moveArray.push(document.getElementById(`${row - 1}-${temp1}`));
-        document.getElementById(`${row - 1}-${temp1}`).classList.add("possible-move");
-    }
-    if (row - 1 > -1 && temp2 > -1) {
-        moveArray.push(document.getElementById(`${row - 1}-${temp2}`));
-        document.getElementById(`${row - 1}-${temp2}`).classList.add("possible-move");
-    }
-    if (row + 1 < 8 && temp1 < 8) {
-        moveArray.push(document.getElementById(`${row + 1}-${temp1}`));
-        document.getElementById(`${row + 1}-${temp1}`).classList.add("possible-move");
-    }
-    if (row + 1 < 8 && temp2 > -1) {
-        moveArray.push(document.getElementById(`${row + 1}-${temp2}`));
-        document.getElementById(`${row + 1}-${temp2}`).classList.add("possible-move");
-    }
-    if (temp1 < 8) {
-        moveArray.push(document.getElementById(`${row}-${temp1}`));
-        document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
-    }
-    if (temp2 > -1) {
-        moveArray.push(document.getElementById(`${row}-${temp2}`));
-        document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
-    }
-    if (row - 1 > -1) {
-        moveArray.push(document.getElementById(`${row - 1}-${coll}`));
-        document.getElementById(`${row - 1}-${coll}`).classList.add("possible-move");
-    }
-    if (row + 1 < 8) {
-        moveArray.push(document.getElementById(`${row + 1}-${coll}`));
-        document.getElementById(`${row + 1}-${coll}`).classList.add("possible-move");
+    for (let i = 1; i < 3; i++) {
+        if (row + i < 8) {
+            moveArray.push(document.getElementById(`${row + i}-${coll}`));
+            document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
+        }
     }
     return moveArray;
 }
-function getKnightMoves(row, coll) {
-    const moveArray = [];
+function getKingMoves(row, coll, moveArray) {
+    for (let i = -1; i < 2; i++) {
+        for (let j = -1; j < 2; j++) {
+            if (-1 < row + i && row + i < 8 && -1 < coll + j && coll + j < 8) {
+                if (i !== 0 || j !== 0) {
+                    console.log("King moves");
+                    moveArray.push(document.getElementById(`${row + i}-${coll + j}`));
+                    document.getElementById(`${row + i}-${coll + j}`).classList.add("possible-move");
+                }
+            }
+        }
+    }
+    return moveArray;
+}
+function getKnightMoves(row, coll, moveArray) {
     if (row - 2 > -1) {
         if (coll - 1 > -1) {
             moveArray.push(document.getElementById(`${row - 2}-${coll - 1}`));
@@ -220,8 +147,7 @@ function getKnightMoves(row, coll) {
     }
     return moveArray;
 }
-function getBishopMoves(row, coll) {
-    const moveArray = [];
+function getBishopMoves(row, coll, moveArray) {
     let temp1 = coll + 1;
     let temp2 = coll - 1;
     for (let i = row - 1; i > -1; i--) {
@@ -252,9 +178,8 @@ function getBishopMoves(row, coll) {
     }
     return moveArray;
 }
-function getRookMoves(row, coll) {
+function getRookMoves(row, coll, moveArray) {
     console.log("rock moves");
-    const moveArray = [];
     temp1 = coll + 1;
     temp2 = coll - 1;
     for (let i = 0; i < 7; i++) {
