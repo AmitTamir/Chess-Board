@@ -33,33 +33,31 @@ function cellClick(e, row, coll) {
         if (piece.row === row && piece.coll === coll) {
             if (piece.type === " r") {
                 const moveArray = [];
-                let possibleMoves = getRookMoves(row, coll, moveArray);
+                getRookMoves(row, coll, moveArray);
             }
             else if (piece.type === " q") {
                 const moveArray = [];
-                let possibleMoves = getQueenMoves(row, coll, moveArray);
+                getQueenMoves(row, coll, moveArray);
             }
             else if (piece.type === " b") {
                 const moveArray = [];
-                let possibleMoves = getBishopMoves(row, coll, moveArray);
+                getBishopMoves(row, coll, moveArray);
             }
             else if (piece.type === " p" && piece.color === "white") {
                 const moveArray = [];
-                let possibleMoves = getWhitePawnMoves(row, coll, moveArray);
+                getWhitePawnMoves(row, coll, moveArray);
             }
             else if (piece.type === " p" && piece.color === "black") {
                 const moveArray = [];
-                let possibleMoves = getBlackPawnMoves(row, coll, moveArray);
+                getBlackPawnMoves(row, coll, moveArray);
             }
             else if (piece.type === " k") {
                 const moveArray = [];
-                let possibleMoves = getKingMoves(row, coll, moveArray);
-                console.log(possibleMoves);
+                getKingMoves(row, coll, moveArray);
             }
             else if (piece.type === " kn") {
                 const moveArray = [];
-                let possibleMoves = getKnightMoves(row, coll, moveArray);
-                console.log(possibleMoves);
+                getKnightMoves(row, coll, moveArray);
             }
         }
     }
