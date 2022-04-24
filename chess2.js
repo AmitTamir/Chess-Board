@@ -99,8 +99,23 @@ function getWhitePawnMoves(row, coll, moveArray) {
                 moveArray.push(document.getElementById(`${row + i}-${coll}`));
                 document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
             }
+
             else {
                 break;
+            }
+        }
+    }
+    if (row - 1 > -1) {
+        if (coll + 1 < 8) {
+            if (possibleMove(row - 1, coll + 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row - 1}-${coll + 1}`));
+                document.getElementById(`${row - 1}-${coll + 1}`).classList.add("possible-move");
+            }
+        }
+        if (coll - 1 > -1) {
+            if (possibleMove(row - 1, coll - 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row - 1}-${coll - 1}`));
+                document.getElementById(`${row - 1}-${coll - 1}`).classList.add("possible-move");
             }
         }
     }
@@ -116,6 +131,20 @@ function getBlackPawnMoves(row, coll, moveArray) {
             }
             else {
                 break;
+            }
+        }
+    }
+    if (row + 1 < 8) {
+        if (coll + 1 < 8) {
+            if (possibleMove(row + 1, coll + 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row + 1}-${coll + 1}`));
+                document.getElementById(`${row + 1}-${coll + 1}`).classList.add("possible-move");
+            }
+        }
+        if (coll - 1 > -1) {
+            if (possibleMove(row + 1, coll - 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row + 1}-${coll - 1}`));
+                document.getElementById(`${row + 1}-${coll - 1}`).classList.add("possible-move");
             }
         }
     }
