@@ -15,6 +15,29 @@ class piece {
         this.color = color;
     }
 }
+function possibleMove(row, coll) {
+    for (let piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            console.log(piece.color);
+
+            return piece.color;
+        }
+    }
+}
+function opositeColor(row, coll) {
+    for (let piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            if (piece.color === "white") {
+                // console.log("black")
+                return "black";
+            }
+            else {
+                // console.log("white")
+                return "white";
+            }
+        }
+    }
+}
 function cellClick(e, row, coll) {
     if (selected !== undefined) {
         selected.classList.remove('clicked');
@@ -72,8 +95,13 @@ function getWhitePawnMoves(row, coll, moveArray) {
     console.log("white pawn moves");
     for (let i = -1; i > -3; i--) {
         if (row + i > -1) {
-            moveArray.push(document.getElementById(`${row + i}-${coll}`));
-            document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
+            if (possibleMove(row + i, coll) === undefined) {
+                moveArray.push(document.getElementById(`${row + i}-${coll}`));
+                document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
+            }
+            else {
+                break;
+            }
         }
     }
     return moveArray;
@@ -82,8 +110,13 @@ function getBlackPawnMoves(row, coll, moveArray) {
     console.log("black pawn moves");
     for (let i = 1; i < 3; i++) {
         if (row + i < 8) {
-            moveArray.push(document.getElementById(`${row + i}-${coll}`));
-            document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
+            if (possibleMove(row + i, coll) === undefined) {
+                moveArray.push(document.getElementById(`${row + i}-${coll}`));
+                document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
+            }
+            else {
+                break;
+            }
         }
     }
     return moveArray;
@@ -93,9 +126,11 @@ function getKingMoves(row, coll, moveArray) {
         for (let j = -1; j < 2; j++) {
             if (-1 < row + i && row + i < 8 && -1 < coll + j && coll + j < 8) {
                 if (i !== 0 || j !== 0) {
-                    console.log("King moves");
-                    moveArray.push(document.getElementById(`${row + i}-${coll + j}`));
-                    document.getElementById(`${row + i}-${coll + j}`).classList.add("possible-move");
+                    if (possibleMove(row + i, coll + i) === undefined || possibleMove(row + i, coll + i) === opositeColor(row, coll)) {
+                        console.log("King moves");
+                        moveArray.push(document.getElementById(`${row + i}-${coll + j}`));
+                        document.getElementById(`${row + i}-${coll + j}`).classList.add("possible-move");
+                    }
                 }
             }
         }
@@ -105,42 +140,58 @@ function getKingMoves(row, coll, moveArray) {
 function getKnightMoves(row, coll, moveArray) {
     if (row - 2 > -1) {
         if (coll - 1 > -1) {
-            moveArray.push(document.getElementById(`${row - 2}-${coll - 1}`));
-            document.getElementById(`${row - 2}-${coll - 1}`).classList.add("possible-move");
+            if (possibleMove(row - 2, coll - 1) === undefined || possibleMove(row - 2, coll - 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row - 2}-${coll - 1}`));
+                document.getElementById(`${row - 2}-${coll - 1}`).classList.add("possible-move");
+            }
         }
         if (coll + 1 < 8) {
-            moveArray.push(document.getElementById(`${row - 2}-${coll + 1}`));
-            document.getElementById(`${row - 2}-${coll + 1}`).classList.add("possible-move");
+            if (possibleMove(row - 2, coll + 1) === undefined || possibleMove(row - 2, coll + 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row - 2}-${coll + 1}`));
+                document.getElementById(`${row - 2}-${coll + 1}`).classList.add("possible-move");
+            }
         }
     }
     if (coll + 2 < 8) {
         if (row - 1 > -1) {
-            moveArray.push(document.getElementById(`${row - 1}-${coll + 2}`));
-            document.getElementById(`${row - 1}-${coll + 2}`).classList.add("possible-move");
+            if (possibleMove(row - 1, coll + 2) === undefined || possibleMove(row - 1, coll + 2) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row - 1}-${coll + 2}`));
+                document.getElementById(`${row - 1}-${coll + 2}`).classList.add("possible-move");
+            }
         }
         if (row + 1 < 8) {
-            moveArray.push(document.getElementById(`${row + 1}-${coll + 2}`));
-            document.getElementById(`${row + 1}-${coll + 2}`).classList.add("possible-move");
+            if (possibleMove(row + 1, coll + 2) === undefined || possibleMove(row + 1, coll + 2) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row + 1}-${coll + 2}`));
+                document.getElementById(`${row + 1}-${coll + 2}`).classList.add("possible-move");
+            }
         }
     }
     if (row + 2 < 8) {
         if (coll - 1 > -1) {
-            moveArray.push(document.getElementById(`${row + 2}-${coll - 1}`));
-            document.getElementById(`${row + 2}-${coll - 1}`).classList.add("possible-move");
+            if (possibleMove(row + 2, coll - 1) === undefined || possibleMove(row + 2, coll - 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row + 2}-${coll - 1}`));
+                document.getElementById(`${row + 2}-${coll - 1}`).classList.add("possible-move");
+            }
         }
         if (coll + 1 < 8) {
-            moveArray.push(document.getElementById(`${row + 2}-${coll + 1}`));
-            document.getElementById(`${row + 2}-${coll + 1}`).classList.add("possible-move");
+            if (possibleMove(row + 2, coll + 1) === undefined || possibleMove(row + 2, coll + 1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row + 2}-${coll + 1}`));
+                document.getElementById(`${row + 2}-${coll + 1}`).classList.add("possible-move");
+            }
         }
     }
     if (coll - 2 > -1) {
         if (row - 1 > -1) {
-            moveArray.push(document.getElementById(`${row - 1}-${coll - 2}`));
-            document.getElementById(`${row - 1}-${coll - 2}`).classList.add("possible-move");
+            if (possibleMove(row - 1, coll - 2) === undefined || possibleMove(row - 1, coll - 2) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row - 1}-${coll - 2}`));
+                document.getElementById(`${row - 1}-${coll - 2}`).classList.add("possible-move");
+            }
         }
         if (row + 1 < 8) {
-            moveArray.push(document.getElementById(`${row + 1}-${coll - 2}`));
-            document.getElementById(`${row + 1}-${coll - 2}`).classList.add("possible-move");
+            if (possibleMove(row + 1, coll - 2) === undefined || possibleMove(row + 1, coll - 2) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row + 1}-${coll - 2}`));
+                document.getElementById(`${row + 1}-${coll - 2}`).classList.add("possible-move");
+            }
         }
     }
     return moveArray;
@@ -182,16 +233,24 @@ function getRookMoves(row, coll, moveArray) {
     temp2 = coll - 1;
     for (let i = 0; i < 7; i++) {
         if (temp1 < 8) {
+            if (possibleMove(row , temp1) === undefined || possibleMove(row , temp1) === opositeColor(row, coll)) {
             moveArray.push(document.getElementById(`${row}-${temp1}`));
             document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
-        }
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${row}-${temp2}`));
-            document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
+
+            }
+            else{
+                break;
+            }
         }
         temp1++;
         temp2--;
     }
+
+    if (temp2 > -1) {
+        moveArray.push(document.getElementById(`${row}-${temp2}`));
+        document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
+    }
+    
     temp1 = row + 1;
     temp2 = row - 1;
     for (let i = 0; i < 7; i++) {
