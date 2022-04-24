@@ -199,29 +199,76 @@ function getKnightMoves(row, coll, moveArray) {
 function getBishopMoves(row, coll, moveArray) {
     let temp1 = coll + 1;
     let temp2 = coll - 1;
+    let checked1 = 0;
+    let checked2 = 0;
     for (let i = row - 1; i > -1; i--) {
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${i}-${temp1}`));
-            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+        if (checked1 === 0) {
+            if (temp1 < 8) {
+                if (possibleMove(i, temp1) === undefined || possibleMove(i, temp1) === opositeColor(row, coll)) {
+                    moveArray.push(document.getElementById(`${i}-${temp1}`));
+                    document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+                    if (possibleMove(i, temp1) === opositeColor(row, coll)) {
+                        checked1++;
+                    }
+                }
+                else {
+                    checked1++;
+                }
+            }
         }
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${i}-${temp2}`));
-            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+        if (checked2 === 0) {
+            if (temp2 > -1) {
+                if (possibleMove(i, temp2) === undefined || possibleMove(i, temp2) === opositeColor(row, coll)) {
+                    moveArray.push(document.getElementById(`${i}-${temp2}`));
+                    document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+                    if (possibleMove(i, temp2) === opositeColor(row, coll)) {
+                        checked2++;
+                    }
+                }
+
+                else {
+                    checked2++;
+                }
+            }
         }
+
         temp1++;
         temp2--;
     }
     temp1 = coll + 1;
     temp2 = coll - 1;
+    checked1 = 0;
+    checked2 = 0;
     for (let i = row + 1; i < 8; i++) {
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${i}-${temp1}`));
-            document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+        if (checked1 === 0) {
+            if (temp1 < 8) {
+                if (possibleMove(i, temp1) === undefined || possibleMove(i, temp1) === opositeColor(row, coll)) {
+                    moveArray.push(document.getElementById(`${i}-${temp1}`));
+                    document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
+                    if (possibleMove(i, temp1) === opositeColor(row, coll)) {
+                        checked1++;
+                    }
+                }
+                else {
+                    checked1++;
+                }
+            }
         }
-        if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${i}-${temp2}`));
-            document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+        if (checked2 === 0) {
+            if (temp2 > -1) {
+                if (possibleMove(i, temp2) === undefined || possibleMove(i, temp2) === opositeColor(row, coll)) {
+                    moveArray.push(document.getElementById(`${i}-${temp2}`));
+                    document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
+                    if (possibleMove(i, temp2) === opositeColor(row, coll)) {
+                        checked2++;
+                    }
+                }
+                else {
+                    checked2++;
+                }
+            }
         }
+
         temp1++;
         temp2--;
     }
@@ -233,12 +280,32 @@ function getRookMoves(row, coll, moveArray) {
     temp2 = coll - 1;
     for (let i = 0; i < 7; i++) {
         if (temp1 < 8) {
-            if (possibleMove(row , temp1) === undefined || possibleMove(row , temp1) === opositeColor(row, coll)) {
-            moveArray.push(document.getElementById(`${row}-${temp1}`));
-            document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
-
+            if (possibleMove(row, temp1) === undefined || possibleMove(row, temp1) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row}-${temp1}`));
+                document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
+                if (possibleMove(row, temp1) === opositeColor(row, coll)) {
+                    break;
+                }
             }
-            else{
+            else {
+                break;
+            }
+        }
+        temp1++;
+        temp2--;
+    }
+    temp1 = coll + 1;
+    temp2 = coll - 1;
+    for (let i = 0; i < 7; i++) {
+        if (temp2 > -1) {
+            if (possibleMove(row, temp2) === undefined || possibleMove(row, temp2) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${row}-${temp2}`));
+                document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
+                if (possibleMove(row, temp1) === opositeColor(row, coll)) {
+                    break;
+                }
+            }
+            else {
                 break;
             }
         }
@@ -246,28 +313,46 @@ function getRookMoves(row, coll, moveArray) {
         temp2--;
     }
 
-    if (temp2 > -1) {
-        moveArray.push(document.getElementById(`${row}-${temp2}`));
-        document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
-    }
-    
+
     temp1 = row + 1;
     temp2 = row - 1;
     for (let i = 0; i < 7; i++) {
         if (temp2 > -1) {
-            moveArray.push(document.getElementById(`${temp2}-${coll}`));
-            document.getElementById(`${temp2}-${coll}`).classList.add("possible-move");
-        }
-        if (temp1 < 8) {
-            moveArray.push(document.getElementById(`${temp1}-${coll}`));
-            document.getElementById(`${temp1}-${coll}`).classList.add("possible-move");
+            if (possibleMove(temp2, coll) === undefined || possibleMove(temp2, coll) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${temp2}-${coll}`));
+                document.getElementById(`${temp2}-${coll}`).classList.add("possible-move");
+                if (possibleMove(temp2, coll) === opositeColor(row, coll)) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
         }
         temp1++;
         temp2--;
     }
+
+    temp1 = row + 1;
+    temp2 = row - 1;
+    for (let i = 0; i < 7; i++) {
+        if (temp1 < 8) {
+            if (possibleMove(temp1, coll) === undefined || possibleMove(temp1, coll) === opositeColor(row, coll)) {
+                moveArray.push(document.getElementById(`${temp1}-${coll}`));
+                document.getElementById(`${temp1}-${coll}`).classList.add("possible-move");
+                if (possibleMove(temp1, coll) === opositeColor(row, coll)) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            temp1++;
+            temp2--;
+        }
+    }
     return moveArray;
 }
-
 function getImage(cell, type, kind) {
     const image = document.createElement("img");
     image.src = "pieces/" + type + kind + ".png";
