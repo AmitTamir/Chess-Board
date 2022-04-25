@@ -9,30 +9,14 @@ class BoardData {
     constructor(pieces) {
         this.pieces = pieces;
     }
-    getPiece(row, coll) {
-        for (let piece of this.pieces) {
-            if (piece.row === row && piece.col === coll) {
-                return piece;
-            }
-        }
-    }
 
-    isEmpty(row, coll) {
-        return this.getPiece(row, coll) === undefined;
-    }
-
-    isPlayer(row, coll, player) {
-        let piece = this.getPiece(row, coll);
-        return piece !== undefined && piece.player === player;
-    }
-
-    removePiece(row, coll) {
-        for (let i = 0; i < this.pieces.length; i++) {
-            let piece = this.pieces[i];
-            if (piece.row === row && piece.col === coll) {
-                // Remove piece at index i
-                this.pieces.splice(i, 1);
-            }
+}
+function removePiece(row, coll) {
+    for (let i = 0; i < pieces.length; i++) {
+        let piece = pieces[i];
+        if (piece.row === row && piece.coll === coll) {
+            // Remove piece at index i
+            pieces.splice(i, 1);
         }
     }
 }
@@ -44,24 +28,37 @@ class piece {
         this.color = color;
     }
 }
-function possibleMove(row, coll) {
-    let piece = getPiece(row, coll);
-    return piece.color;
-}
-function opositeColor(row, coll) {
-    const piece = getPiece(row, coll);
-    if (piece.color === "white") {
-        // console.log("black")
-        return "black";
+function getPiece(row, coll) {
+    for (const piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            return piece;
+        }
     }
-    else {
-        // console.log("white")
-        return "white";
+}
 
+function possibleMove(row, coll) {
+    for (const piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            console.log(piece);
+            return piece.color;
+        }
+    }
+}
 
+function opositeColor(row, coll) {
+    for (const piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            if (piece.color === "white") {
+                return "black";
+            }
+            else {
+                return "white";
+            }
+        }
     }
 }
 function cellClick(e, row, coll) {
+    let checked = 0;
     if (selected !== undefined) {
         selected.classList.remove('clicked');
     }
@@ -73,42 +70,64 @@ function cellClick(e, row, coll) {
             board.rows[i].cells[j].classList.remove('possible-move');
         }
     }
+
     for (let move of moveArray) {
         let xRow = parseInt(move.id.charAt(0));
         let xColl = parseInt(move.id.charAt(2));
         if (xRow === row && xColl === coll) {
-            const piece = getPiece(yRow, yColl);
-            console.log("hey");
-            piece.row = xRow;
-            piece.coll = xColl;
+            for (const piece of pieces) {
+                if (piece.row === yRow && piece.coll === yColl) {
+                    console.log("hey");
+                    for (const piece of pieces) {
+                        if (piece.row === row && piece.coll === row) {
+                            removeImage(board.rows[row].cells[coll]);
+                            removePiece(row, coll);
+                        }
+                    }
+                    piece.row = xRow;
+                    piece.coll = xColl;
+                    getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
+                    removeImage(board.rows[yRow].cells[yColl]);
+                }
+            }
+            checked++;
         }
     }
+
+
     yRow = row;
     yColl = coll;
-    const piece = getPiece(row, coll);
-    moveArray = [];
-    if (piece.type === " r") {
-        getRookMoves(row, coll, moveArray);
+    if (checked === 0) {
+        // const piece = getPiece(row, coll);
+        for (const piece of pieces) {
+            if (piece.row === row && piece.coll === coll) {
+                moveArray = [];
+                if (piece.type === " r") {
+                    getRookMoves(row, coll, moveArray);
+                }
+                else if (piece.type === " q") {
+                    getQueenMoves(row, coll, moveArray);
+                }
+                else if (piece.type === " b") {
+                    getBishopMoves(row, coll, moveArray);
+                }
+                else if (piece.type === " p" && piece.color === "white") {
+                    getWhitePawnMoves(row, coll, moveArray);
+                }
+                else if (piece.type === " p" && piece.color === "black") {
+                    getBlackPawnMoves(row, coll, moveArray);
+                }
+                else if (piece.type === " k") {
+                    getKingMoves(row, coll, moveArray);
+                }
+                else if (piece.type === " kn") {
+                    getKnightMoves(row, coll, moveArray);
+                }
+            }
+        }
     }
-    else if (piece.type === " q") {
-        getQueenMoves(row, coll, moveArray);
-    }
-    else if (piece.type === " b") {
-        getBishopMoves(row, coll, moveArray);
-    }
-    else if (piece.type === " p" && piece.color === "white") {
-        getWhitePawnMoves(row, coll, moveArray);
-    }
-    else if (piece.type === " p" && piece.color === "black") {
-        getBlackPawnMoves(row, coll, moveArray);
-    }
-    else if (piece.type === " k") {
-        getKingMoves(row, coll, moveArray);
-    }
-    else if (piece.type === " kn") {
-        getKnightMoves(row, coll, moveArray);
-    }
-    console.log(moveArray);
+
+    console.log(checked);
 }
 
 
@@ -411,7 +430,11 @@ function getImage(cell, type, kind) {
     image.src = "pieces/" + type + kind + ".png";
     cell.appendChild(image);
 }
+function removeImage(cell) {
+    console.log(cell);
+    cell.removeChild(cell.getElementsByTagName("img")[0]);
 
+}
 function getInitialBoard() {
     let result = [];
     addPieces(result, 0, "black");
@@ -433,13 +456,8 @@ function addPieces(result, row, color) {
     result.push(new piece(row, 7, " r", color));
 }
 
-function initGame() {
-    // Create list of pieces (32 total)
-    boardData = new BoardData(getInitialBoard());
-    createChessBoard(boardData);
-}
 
-function createChessBoard(boardData) {
+function createChessBoard() {
     const body = document.getElementsByTagName("body")[0];
     board = document.createElement("table");
     board.className = "board";
@@ -470,11 +488,11 @@ function createChessBoard(boardData) {
         }
         body.appendChild(board);
     }
-    // pieces = getInitialBoard();
-    for (let piece of boardData.pieces) {
+    pieces = getInitialBoard();
+    for (let piece of pieces) {
         getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
     }
 }
-window.addEventListener('load', initGame);
+window.addEventListener('load', createChessBoard);
 
 
