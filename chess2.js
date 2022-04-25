@@ -2,9 +2,38 @@ let selected;
 let pieces = [];
 let board;
 let boardData;
+let moveArray = [];
+let yRow;
+let yColl;
 class BoardData {
     constructor(pieces) {
         this.pieces = pieces;
+    }
+    getPiece(row, coll) {
+        for (let piece of this.pieces) {
+            if (piece.row === row && piece.col === coll) {
+                return piece;
+            }
+        }
+    }
+
+    isEmpty(row, coll) {
+        return this.getPiece(row, coll) === undefined;
+    }
+
+    isPlayer(row, coll, player) {
+        let piece = this.getPiece(row, coll);
+        return piece !== undefined && piece.player === player;
+    }
+
+    removePiece(row, coll) {
+        for (let i = 0; i < this.pieces.length; i++) {
+            let piece = this.pieces[i];
+            if (piece.row === row && piece.col === coll) {
+                // Remove piece at index i
+                this.pieces.splice(i, 1);
+            }
+        }
     }
 }
 class piece {
@@ -16,33 +45,26 @@ class piece {
     }
 }
 function possibleMove(row, coll) {
-    for (let piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
-            console.log(piece.color);
-
-            return piece.color;
-        }
-    }
+    let piece = getPiece(row, coll);
+    return piece.color;
 }
 function opositeColor(row, coll) {
-    for (let piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
-            if (piece.color === "white") {
-                // console.log("black")
-                return "black";
-            }
-            else {
-                // console.log("white")
-                return "white";
-            }
-        }
+    const piece = getPiece(row, coll);
+    if (piece.color === "white") {
+        // console.log("black")
+        return "black";
+    }
+    else {
+        // console.log("white")
+        return "white";
+
+
     }
 }
 function cellClick(e, row, coll) {
     if (selected !== undefined) {
         selected.classList.remove('clicked');
     }
-    console.log(row, coll);
     selected = e.currentTarget;
     selected.classList.add('clicked');
 
@@ -51,40 +73,45 @@ function cellClick(e, row, coll) {
             board.rows[i].cells[j].classList.remove('possible-move');
         }
     }
-
-    for (let piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
-            if (piece.type === " r") {
-                const moveArray = [];
-                getRookMoves(row, coll, moveArray);
-            }
-            else if (piece.type === " q") {
-                const moveArray = [];
-                getQueenMoves(row, coll, moveArray);
-            }
-            else if (piece.type === " b") {
-                const moveArray = [];
-                getBishopMoves(row, coll, moveArray);
-            }
-            else if (piece.type === " p" && piece.color === "white") {
-                const moveArray = [];
-                getWhitePawnMoves(row, coll, moveArray);
-            }
-            else if (piece.type === " p" && piece.color === "black") {
-                const moveArray = [];
-                getBlackPawnMoves(row, coll, moveArray);
-            }
-            else if (piece.type === " k") {
-                const moveArray = [];
-                getKingMoves(row, coll, moveArray);
-            }
-            else if (piece.type === " kn") {
-                const moveArray = [];
-                getKnightMoves(row, coll, moveArray);
-            }
+    for (let move of moveArray) {
+        let xRow = parseInt(move.id.charAt(0));
+        let xColl = parseInt(move.id.charAt(2));
+        if (xRow === row && xColl === coll) {
+            const piece = getPiece(yRow, yColl);
+            console.log("hey");
+            piece.row = xRow;
+            piece.coll = xColl;
         }
     }
+    yRow = row;
+    yColl = coll;
+    const piece = getPiece(row, coll);
+    moveArray = [];
+    if (piece.type === " r") {
+        getRookMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " q") {
+        getQueenMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " b") {
+        getBishopMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " p" && piece.color === "white") {
+        getWhitePawnMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " p" && piece.color === "black") {
+        getBlackPawnMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " k") {
+        getKingMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " kn") {
+        getKnightMoves(row, coll, moveArray);
+    }
+    console.log(moveArray);
 }
+
+
 function getQueenMoves(row, coll, moveArray) {
     getBishopMoves(row, coll, moveArray);
     getRookMoves(row, coll, moveArray);
@@ -92,8 +119,7 @@ function getQueenMoves(row, coll, moveArray) {
 }
 
 function getWhitePawnMoves(row, coll, moveArray) {
-    console.log("white pawn moves");
-    for (let i = -1; i > -3; i--) {
+    for (let i = -1; i > -2; i--) {
         if (row + i > -1) {
             if (possibleMove(row + i, coll) === undefined) {
                 moveArray.push(document.getElementById(`${row + i}-${coll}`));
@@ -122,8 +148,7 @@ function getWhitePawnMoves(row, coll, moveArray) {
     return moveArray;
 }
 function getBlackPawnMoves(row, coll, moveArray) {
-    console.log("black pawn moves");
-    for (let i = 1; i < 3; i++) {
+    for (let i = 1; i < 2; i++) {
         if (row + i < 8) {
             if (possibleMove(row + i, coll) === undefined) {
                 moveArray.push(document.getElementById(`${row + i}-${coll}`));
@@ -254,7 +279,6 @@ function getBishopMoves(row, coll, moveArray) {
                         checked2++;
                     }
                 }
-
                 else {
                     checked2++;
                 }
@@ -409,7 +433,13 @@ function addPieces(result, row, color) {
     result.push(new piece(row, 7, " r", color));
 }
 
-function createChessBoard() {
+function initGame() {
+    // Create list of pieces (32 total)
+    boardData = new BoardData(getInitialBoard());
+    createChessBoard(boardData);
+}
+
+function createChessBoard(boardData) {
     const body = document.getElementsByTagName("body")[0];
     board = document.createElement("table");
     board.className = "board";
@@ -440,12 +470,11 @@ function createChessBoard() {
         }
         body.appendChild(board);
     }
-    pieces = getInitialBoard();
-    boardData = new BoardData(getInitialBoard());
-    console.log(boardData);
-    for (let piece of pieces) {
+    // pieces = getInitialBoard();
+    for (let piece of boardData.pieces) {
         getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
     }
 }
-window.addEventListener('load', createChessBoard);
+window.addEventListener('load', initGame);
+
 
