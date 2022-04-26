@@ -4,10 +4,10 @@ let board;
 let boardData;
 let moveArray = [];
 let lastRow;
-let xRow;
 let lastColl;
-let xColl;
-
+let moveRow;
+let moveColl;
+const PIECES = [" r", " kn", " b", " q", " k", " b", " kn", " r"]
 let checked = 0;
 class BoardData {
     constructor(pieces) {
@@ -105,30 +105,11 @@ function capture(row, coll, piece) {
 
 }
 function cellClick(e, row, coll) {
-    if (selected !== undefined) {
-        selected.classList.remove('clicked');
-    }
-    selected = e.currentTarget;
-    selected.classList.add('clicked');
-
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
             board.rows[i].cells[j].classList.remove('possible-move');
-        }
-    }
-    for (let move of moveArray) {
-        xRow = parseInt(move.id.charAt(0));
-        xColl = parseInt(move.id.charAt(2));
-        if (xRow === row && xColl === coll) {
-            for (const piece of pieces) {
-                if (piece.row === lastRow && piece.coll === lastColl) {
-                    capture(row, coll, piece);
-                    checked++;
-                    piece.row = xRow;
-                    piece.coll = xColl;
-                    getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
-                    removeImage(board.rows[lastRow].cells[lastColl]);
-                }
+            if (selected !== undefined) {
+                selected.classList.remove('clicked');
             }
         }
     }
@@ -139,10 +120,30 @@ function cellClick(e, row, coll) {
             }
         }
     }
+    selected = e.currentTarget;
+    selected.classList.add('clicked');
+    for (let move of moveArray) {
+        moveRow = parseInt(move.id.charAt(0));
+        moveColl = parseInt(move.id.charAt(2));
+        if (moveRow === row && moveColl === coll) {
+            for (const piece of pieces) {
+                if (piece.row === lastRow && piece.coll === lastColl) {
+                    if (turn(piece) === piece.color) {
+                        capture(row, coll, piece);
+                        checked++;
+                        piece.row = moveRow;
+                        piece.coll = moveColl;
+                        getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
+                        removeImage(board.rows[lastRow].cells[lastColl]);
+                    }
+                }
+            }
+        }
+    }
+
     lastRow = row;
     lastColl = coll;
 }
-
 
 function getQueenMoves(row, coll, moveArray) {
     getBishopMoves(row, coll, moveArray);
@@ -450,23 +451,13 @@ function removeImage(cell) {
 }
 function getInitialBoard() {
     let result = [];
-    addPieces(result, 0, "black");
-    addPieces(result, 7, "white");
     for (let i = 0; i < 8; i++) {
         result.push(new Piece(1, i, " p", "black"));
         result.push(new Piece(6, i, " p", "white"));
+        result.push(new Piece(0, i, PIECES[i], "black"));
+        result.push(new Piece(7, i, PIECES[i], "white"));
     }
     return result;
-}
-function addPieces(result, row, color) {
-    result.push(new Piece(row, 0, " r", color));
-    result.push(new Piece(row, 1, " kn", color));
-    result.push(new Piece(row, 2, " b", color));
-    result.push(new Piece(row, 3, " q", color));
-    result.push(new Piece(row, 4, " k", color));
-    result.push(new Piece(row, 5, " b", color));
-    result.push(new Piece(row, 6, " kn", color));
-    result.push(new Piece(row, 7, " r", color));
 }
 
 
