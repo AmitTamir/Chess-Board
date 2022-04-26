@@ -3,11 +3,32 @@ let pieces = [];
 let board;
 let boardData;
 let moveArray = [];
-let yRow;
-let yColl;
+let lastRow;
+let xRow;
+let lastColl;
+let xColl;
+
+let checked = 0;
 class BoardData {
     constructor(pieces) {
         this.pieces = pieces;
+    }
+
+}
+class Piece {
+    constructor(row, coll, type, color) {
+        this.row = row;
+        this.coll = coll;
+        this.type = type;
+        this.color = color;
+    }
+}
+function turn() {
+    if (checked % 2 === 0) {
+        return "white";
+    }
+    else {
+        return "black";
     }
 
 }
@@ -18,14 +39,6 @@ function removePiece(row, coll) {
             // Remove piece at index i
             pieces.splice(i, 1);
         }
-    }
-}
-class piece {
-    constructor(row, coll, type, color) {
-        this.row = row;
-        this.coll = coll;
-        this.type = type;
-        this.color = color;
     }
 }
 function getPiece(row, coll) {
@@ -57,8 +70,41 @@ function opositeColor(row, coll) {
         }
     }
 }
+function tryMove(row, coll, piece) {
+    moveArray = [];
+    if (piece.type === " r") {
+        getRookMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " q") {
+        getQueenMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " b") {
+        getBishopMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " p" && piece.color === "white") {
+        getWhitePawnMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " p" && piece.color === "black") {
+        getBlackPawnMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " k") {
+        getKingMoves(row, coll, moveArray);
+    }
+    else if (piece.type === " kn") {
+        getKnightMoves(row, coll, moveArray);
+    }
+}
+function capture(row, coll, piece) {
+    console.log("hey");
+    for (const piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            removeImage(board.rows[row].cells[coll]);
+            removePiece(row, coll);
+        }
+    }
+
+}
 function cellClick(e, row, coll) {
-    let checked = 0;
     if (selected !== undefined) {
         selected.classList.remove('clicked');
     }
@@ -70,64 +116,31 @@ function cellClick(e, row, coll) {
             board.rows[i].cells[j].classList.remove('possible-move');
         }
     }
-
     for (let move of moveArray) {
-        let xRow = parseInt(move.id.charAt(0));
-        let xColl = parseInt(move.id.charAt(2));
+        xRow = parseInt(move.id.charAt(0));
+        xColl = parseInt(move.id.charAt(2));
         if (xRow === row && xColl === coll) {
             for (const piece of pieces) {
-                if (piece.row === yRow && piece.coll === yColl) {
-                    console.log("hey");
-                    for (const piece of pieces) {
-                        if (piece.row === row && piece.coll === row) {
-                            removeImage(board.rows[row].cells[coll]);
-                            removePiece(row, coll);
-                        }
-                    }
+                if (piece.row === lastRow && piece.coll === lastColl) {
+                    capture(row, coll, piece);
+                    checked++;
                     piece.row = xRow;
                     piece.coll = xColl;
                     getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
-                    removeImage(board.rows[yRow].cells[yColl]);
-                }
-            }
-            checked++;
-        }
-    }
-
-
-    yRow = row;
-    yColl = coll;
-    if (checked === 0) {
-        // const piece = getPiece(row, coll);
-        for (const piece of pieces) {
-            if (piece.row === row && piece.coll === coll) {
-                moveArray = [];
-                if (piece.type === " r") {
-                    getRookMoves(row, coll, moveArray);
-                }
-                else if (piece.type === " q") {
-                    getQueenMoves(row, coll, moveArray);
-                }
-                else if (piece.type === " b") {
-                    getBishopMoves(row, coll, moveArray);
-                }
-                else if (piece.type === " p" && piece.color === "white") {
-                    getWhitePawnMoves(row, coll, moveArray);
-                }
-                else if (piece.type === " p" && piece.color === "black") {
-                    getBlackPawnMoves(row, coll, moveArray);
-                }
-                else if (piece.type === " k") {
-                    getKingMoves(row, coll, moveArray);
-                }
-                else if (piece.type === " kn") {
-                    getKnightMoves(row, coll, moveArray);
+                    removeImage(board.rows[lastRow].cells[lastColl]);
                 }
             }
         }
     }
-
-    console.log(checked);
+    for (const piece of pieces) {
+        if (piece.row === row && piece.coll === coll) {
+            if (turn(piece) === piece.color) {
+                tryMove(row, coll, piece);
+            }
+        }
+    }
+    lastRow = row;
+    lastColl = coll;
 }
 
 
@@ -440,20 +453,20 @@ function getInitialBoard() {
     addPieces(result, 0, "black");
     addPieces(result, 7, "white");
     for (let i = 0; i < 8; i++) {
-        result.push(new piece(1, i, " p", "black"));
-        result.push(new piece(6, i, " p", "white"));
+        result.push(new Piece(1, i, " p", "black"));
+        result.push(new Piece(6, i, " p", "white"));
     }
     return result;
 }
 function addPieces(result, row, color) {
-    result.push(new piece(row, 0, " r", color));
-    result.push(new piece(row, 1, " kn", color));
-    result.push(new piece(row, 2, " b", color));
-    result.push(new piece(row, 3, " q", color));
-    result.push(new piece(row, 4, " k", color));
-    result.push(new piece(row, 5, " b", color));
-    result.push(new piece(row, 6, " kn", color));
-    result.push(new piece(row, 7, " r", color));
+    result.push(new Piece(row, 0, " r", color));
+    result.push(new Piece(row, 1, " kn", color));
+    result.push(new Piece(row, 2, " b", color));
+    result.push(new Piece(row, 3, " q", color));
+    result.push(new Piece(row, 4, " k", color));
+    result.push(new Piece(row, 5, " b", color));
+    result.push(new Piece(row, 6, " kn", color));
+    result.push(new Piece(row, 7, " r", color));
 }
 
 
