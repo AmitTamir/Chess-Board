@@ -13,54 +13,43 @@ class BoardData {
     constructor(pieces) {
         this.pieces = pieces;
     }
-
-}
-class Piece {
-    constructor(row, coll, type, color) {
-        this.row = row;
-        this.coll = coll;
-        this.type = type;
-        this.color = color;
-    }
-}
-function turn() {
-    if (checked % 2 === 0) {
-        return "white";
-    }
-    else {
-        return "black";
-    }
-
-}
-function removePiece(row, coll) {
-    for (let i = 0; i < pieces.length; i++) {
-        let piece = pieces[i];
-        if (piece.row === row && piece.coll === coll) {
-            // Remove piece at index i
-            pieces.splice(i, 1);
+    getPiece(row, coll) {
+        for (const piece of this.pieces) {
+            if (piece.row === row && piece.coll === coll) {
+                return piece;
+            }
         }
     }
-}
-function getPiece(row, coll) {
-    for (const piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
-            return piece;
+    turn() {
+        if (checked % 2 === 0) {
+            return "white";
+        }
+        else {
+            return "black";
+        }
+
+    }
+    removePiece(row, coll) {
+        for (let i = 0; i < this.pieces.length; i++) {
+            let piece = pieces[i];
+            if (piece.row === row && piece.coll === coll) {
+                // Remove piece at index i
+                pieces.splice(i, 1);
+            }
         }
     }
-}
 
-function possibleMove(row, coll) {
-    for (const piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
+    possibleMove(row, coll) {
+        const piece = this.getPiece(row, coll)
+        if (piece !== undefined) {
             console.log(piece);
             return piece.color;
         }
     }
-}
 
-function opositeColor(row, coll) {
-    for (const piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
+    opositeColor(row, coll) {
+        const piece = this.getPiece(row, coll)
+        if (piece !== undefined) {
             if (piece.color === "white") {
                 return "black";
             }
@@ -68,6 +57,14 @@ function opositeColor(row, coll) {
                 return "white";
             }
         }
+    }
+}
+class Piece {
+    constructor(row, coll, type, color) {
+        this.row = row;
+        this.coll = coll;
+        this.type = type;
+        this.color = color;
     }
 }
 function tryMove(row, coll, piece) {
@@ -94,15 +91,13 @@ function tryMove(row, coll, piece) {
         getKnightMoves(row, coll, moveArray);
     }
 }
-function capture(row, coll, piece) {
+function capture(row, coll) {
     console.log("hey");
-    for (const piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
-            removeImage(board.rows[row].cells[coll]);
-            removePiece(row, coll);
-        }
+    const piece = boardData.getPiece(row, coll)
+    if (piece !== undefined) {
+        removeImage(board.rows[row].cells[coll]);
+        removePiece(row, coll);
     }
-
 }
 function cellClick(e, row, coll) {
     for (let i = 0; i < 8; i++) {
@@ -113,11 +108,10 @@ function cellClick(e, row, coll) {
             }
         }
     }
-    for (const piece of pieces) {
-        if (piece.row === row && piece.coll === coll) {
-            if (turn(piece) === piece.color) {
-                tryMove(row, coll, piece);
-            }
+    const piece = boardData.getPiece(row, coll)
+    if (piece !== undefined) {
+        if (boardData.turn(piece) === piece.color) {
+            tryMove(row, coll, piece);
         }
     }
     selected = e.currentTarget;
@@ -126,16 +120,15 @@ function cellClick(e, row, coll) {
         moveRow = parseInt(move.id.charAt(0));
         moveColl = parseInt(move.id.charAt(2));
         if (moveRow === row && moveColl === coll) {
-            for (const piece of pieces) {
-                if (piece.row === lastRow && piece.coll === lastColl) {
-                    if (turn(piece) === piece.color) {
-                        capture(row, coll, piece);
-                        checked++;
-                        piece.row = moveRow;
-                        piece.coll = moveColl;
-                        getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
-                        removeImage(board.rows[lastRow].cells[lastColl]);
-                    }
+            const piece = boardData.getPiece(lastRow, lastColl)
+            if (piece !== undefined) {
+                if (boardData.turn(piece) === piece.color) {
+                    capture(row, coll, piece);
+                    checked++;
+                    piece.row = moveRow;
+                    piece.coll = moveColl;
+                    getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
+                    removeImage(board.rows[lastRow].cells[lastColl]);
                 }
             }
         }
@@ -145,300 +138,6 @@ function cellClick(e, row, coll) {
     lastColl = coll;
 }
 
-function getQueenMoves(row, coll, moveArray) {
-    getBishopMoves(row, coll, moveArray);
-    getRookMoves(row, coll, moveArray);
-    return moveArray;
-}
-
-function getWhitePawnMoves(row, coll, moveArray) {
-    for (let i = -1; i > -2; i--) {
-        if (row + i > -1) {
-            if (possibleMove(row + i, coll) === undefined) {
-                moveArray.push(document.getElementById(`${row + i}-${coll}`));
-                document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
-            }
-
-            else {
-                break;
-            }
-        }
-    }
-    if (row - 1 > -1) {
-        if (coll + 1 < 8) {
-            if (possibleMove(row - 1, coll + 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row - 1}-${coll + 1}`));
-                document.getElementById(`${row - 1}-${coll + 1}`).classList.add("possible-move");
-            }
-        }
-        if (coll - 1 > -1) {
-            if (possibleMove(row - 1, coll - 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row - 1}-${coll - 1}`));
-                document.getElementById(`${row - 1}-${coll - 1}`).classList.add("possible-move");
-            }
-        }
-    }
-    return moveArray;
-}
-function getBlackPawnMoves(row, coll, moveArray) {
-    for (let i = 1; i < 2; i++) {
-        if (row + i < 8) {
-            if (possibleMove(row + i, coll) === undefined) {
-                moveArray.push(document.getElementById(`${row + i}-${coll}`));
-                document.getElementById(`${row + i}-${coll}`).classList.add("possible-move");
-            }
-            else {
-                break;
-            }
-        }
-    }
-    if (row + 1 < 8) {
-        if (coll + 1 < 8) {
-            if (possibleMove(row + 1, coll + 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row + 1}-${coll + 1}`));
-                document.getElementById(`${row + 1}-${coll + 1}`).classList.add("possible-move");
-            }
-        }
-        if (coll - 1 > -1) {
-            if (possibleMove(row + 1, coll - 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row + 1}-${coll - 1}`));
-                document.getElementById(`${row + 1}-${coll - 1}`).classList.add("possible-move");
-            }
-        }
-    }
-    return moveArray;
-}
-function getKingMoves(row, coll, moveArray) {
-    for (let i = -1; i < 2; i++) {
-        for (let j = -1; j < 2; j++) {
-            if (-1 < row + i && row + i < 8 && -1 < coll + j && coll + j < 8) {
-                if (i !== 0 || j !== 0) {
-                    if (possibleMove(row + i, coll + i) === undefined || possibleMove(row + i, coll + i) === opositeColor(row, coll)) {
-                        console.log("King moves");
-                        moveArray.push(document.getElementById(`${row + i}-${coll + j}`));
-                        document.getElementById(`${row + i}-${coll + j}`).classList.add("possible-move");
-                    }
-                }
-            }
-        }
-    }
-    return moveArray;
-}
-function getKnightMoves(row, coll, moveArray) {
-    if (row - 2 > -1) {
-        if (coll - 1 > -1) {
-            if (possibleMove(row - 2, coll - 1) === undefined || possibleMove(row - 2, coll - 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row - 2}-${coll - 1}`));
-                document.getElementById(`${row - 2}-${coll - 1}`).classList.add("possible-move");
-            }
-        }
-        if (coll + 1 < 8) {
-            if (possibleMove(row - 2, coll + 1) === undefined || possibleMove(row - 2, coll + 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row - 2}-${coll + 1}`));
-                document.getElementById(`${row - 2}-${coll + 1}`).classList.add("possible-move");
-            }
-        }
-    }
-    if (coll + 2 < 8) {
-        if (row - 1 > -1) {
-            if (possibleMove(row - 1, coll + 2) === undefined || possibleMove(row - 1, coll + 2) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row - 1}-${coll + 2}`));
-                document.getElementById(`${row - 1}-${coll + 2}`).classList.add("possible-move");
-            }
-        }
-        if (row + 1 < 8) {
-            if (possibleMove(row + 1, coll + 2) === undefined || possibleMove(row + 1, coll + 2) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row + 1}-${coll + 2}`));
-                document.getElementById(`${row + 1}-${coll + 2}`).classList.add("possible-move");
-            }
-        }
-    }
-    if (row + 2 < 8) {
-        if (coll - 1 > -1) {
-            if (possibleMove(row + 2, coll - 1) === undefined || possibleMove(row + 2, coll - 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row + 2}-${coll - 1}`));
-                document.getElementById(`${row + 2}-${coll - 1}`).classList.add("possible-move");
-            }
-        }
-        if (coll + 1 < 8) {
-            if (possibleMove(row + 2, coll + 1) === undefined || possibleMove(row + 2, coll + 1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row + 2}-${coll + 1}`));
-                document.getElementById(`${row + 2}-${coll + 1}`).classList.add("possible-move");
-            }
-        }
-    }
-    if (coll - 2 > -1) {
-        if (row - 1 > -1) {
-            if (possibleMove(row - 1, coll - 2) === undefined || possibleMove(row - 1, coll - 2) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row - 1}-${coll - 2}`));
-                document.getElementById(`${row - 1}-${coll - 2}`).classList.add("possible-move");
-            }
-        }
-        if (row + 1 < 8) {
-            if (possibleMove(row + 1, coll - 2) === undefined || possibleMove(row + 1, coll - 2) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row + 1}-${coll - 2}`));
-                document.getElementById(`${row + 1}-${coll - 2}`).classList.add("possible-move");
-            }
-        }
-    }
-    return moveArray;
-}
-function getBishopMoves(row, coll, moveArray) {
-    let temp1 = coll + 1;
-    let temp2 = coll - 1;
-    let checked1 = 0;
-    let checked2 = 0;
-    for (let i = row - 1; i > -1; i--) {
-        if (checked1 === 0) {
-            if (temp1 < 8) {
-                if (possibleMove(i, temp1) === undefined || possibleMove(i, temp1) === opositeColor(row, coll)) {
-                    moveArray.push(document.getElementById(`${i}-${temp1}`));
-                    document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
-                    if (possibleMove(i, temp1) === opositeColor(row, coll)) {
-                        checked1++;
-                    }
-                }
-                else {
-                    checked1++;
-                }
-            }
-        }
-        if (checked2 === 0) {
-            if (temp2 > -1) {
-                if (possibleMove(i, temp2) === undefined || possibleMove(i, temp2) === opositeColor(row, coll)) {
-                    moveArray.push(document.getElementById(`${i}-${temp2}`));
-                    document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
-                    if (possibleMove(i, temp2) === opositeColor(row, coll)) {
-                        checked2++;
-                    }
-                }
-                else {
-                    checked2++;
-                }
-            }
-        }
-
-        temp1++;
-        temp2--;
-    }
-    temp1 = coll + 1;
-    temp2 = coll - 1;
-    checked1 = 0;
-    checked2 = 0;
-    for (let i = row + 1; i < 8; i++) {
-        if (checked1 === 0) {
-            if (temp1 < 8) {
-                if (possibleMove(i, temp1) === undefined || possibleMove(i, temp1) === opositeColor(row, coll)) {
-                    moveArray.push(document.getElementById(`${i}-${temp1}`));
-                    document.getElementById(`${i}-${temp1}`).classList.add("possible-move");
-                    if (possibleMove(i, temp1) === opositeColor(row, coll)) {
-                        checked1++;
-                    }
-                }
-                else {
-                    checked1++;
-                }
-            }
-        }
-        if (checked2 === 0) {
-            if (temp2 > -1) {
-                if (possibleMove(i, temp2) === undefined || possibleMove(i, temp2) === opositeColor(row, coll)) {
-                    moveArray.push(document.getElementById(`${i}-${temp2}`));
-                    document.getElementById(`${i}-${temp2}`).classList.add("possible-move");
-                    if (possibleMove(i, temp2) === opositeColor(row, coll)) {
-                        checked2++;
-                    }
-                }
-                else {
-                    checked2++;
-                }
-            }
-        }
-
-        temp1++;
-        temp2--;
-    }
-    return moveArray;
-}
-function getRookMoves(row, coll, moveArray) {
-    console.log("rock moves");
-    temp1 = coll + 1;
-    temp2 = coll - 1;
-    for (let i = 0; i < 7; i++) {
-        if (temp1 < 8) {
-            if (possibleMove(row, temp1) === undefined || possibleMove(row, temp1) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row}-${temp1}`));
-                document.getElementById(`${row}-${temp1}`).classList.add("possible-move");
-                if (possibleMove(row, temp1) === opositeColor(row, coll)) {
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
-        temp1++;
-        temp2--;
-    }
-    temp1 = coll + 1;
-    temp2 = coll - 1;
-    for (let i = 0; i < 7; i++) {
-        if (temp2 > -1) {
-            if (possibleMove(row, temp2) === undefined || possibleMove(row, temp2) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${row}-${temp2}`));
-                document.getElementById(`${row}-${temp2}`).classList.add("possible-move");
-                if (possibleMove(row, temp1) === opositeColor(row, coll)) {
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
-        temp1++;
-        temp2--;
-    }
-
-
-    temp1 = row + 1;
-    temp2 = row - 1;
-    for (let i = 0; i < 7; i++) {
-        if (temp2 > -1) {
-            if (possibleMove(temp2, coll) === undefined || possibleMove(temp2, coll) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${temp2}-${coll}`));
-                document.getElementById(`${temp2}-${coll}`).classList.add("possible-move");
-                if (possibleMove(temp2, coll) === opositeColor(row, coll)) {
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
-        temp1++;
-        temp2--;
-    }
-
-    temp1 = row + 1;
-    temp2 = row - 1;
-    for (let i = 0; i < 7; i++) {
-        if (temp1 < 8) {
-            if (possibleMove(temp1, coll) === undefined || possibleMove(temp1, coll) === opositeColor(row, coll)) {
-                moveArray.push(document.getElementById(`${temp1}-${coll}`));
-                document.getElementById(`${temp1}-${coll}`).classList.add("possible-move");
-                if (possibleMove(temp1, coll) === opositeColor(row, coll)) {
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-            temp1++;
-            temp2--;
-        }
-    }
-    return moveArray;
-}
 function getImage(cell, type, kind) {
     const image = document.createElement("img");
     image.src = "pieces/" + type + kind + ".png";
@@ -460,7 +159,6 @@ function getInitialBoard() {
     return result;
 }
 
-
 function createChessBoard() {
     const body = document.getElementsByTagName("body")[0];
     board = document.createElement("table");
@@ -469,21 +167,12 @@ function createChessBoard() {
         let row = document.createElement('tr');
         for (let i = 0; i < 8; i++) {
             let cell = document.createElement('td');
-            if (t % 2 === 0) {
-                if (i % 2 === 0) {
-                    cell.className = "light";
-                }
-                else {
-                    cell.className = "dark";
-                }
+            if ((t + i) % 2 === 0) {
+
+                cell.className = "light";
             }
             else {
-                if (i % 2 === 0) {
-                    cell.className = "dark";
-                }
-                else {
-                    cell.className = "light";
-                }
+                cell.className = "dark";
             }
             cell.addEventListener('click', (e) => cellClick(e, t, i));
             board.appendChild(row);
@@ -492,6 +181,7 @@ function createChessBoard() {
         }
         body.appendChild(board);
     }
+    boardData = new BoardData(getInitialBoard());
     pieces = getInitialBoard();
     for (let piece of pieces) {
         getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
