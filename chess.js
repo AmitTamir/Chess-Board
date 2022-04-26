@@ -8,6 +8,7 @@ let lastColl;
 let moveRow;
 let moveColl;
 const PIECES = [" r", " kn", " b", " q", " k", " b", " kn", " r"]
+const knightMoves = [[-2, -1, 1], [2, -1, 1],]
 let checked = 0;
 class BoardData {
     constructor(pieces) {
@@ -30,7 +31,7 @@ class BoardData {
 
     }
     removePiece(row, coll) {
-        for (let i = 0; i < this.pieces.length; i++) {
+        for (let i = 0; i < pieces.length; i++) {
             let piece = pieces[i];
             if (piece.row === row && piece.coll === coll) {
                 // Remove piece at index i
@@ -42,7 +43,6 @@ class BoardData {
     possibleMove(row, coll) {
         const piece = this.getPiece(row, coll)
         if (piece !== undefined) {
-            console.log(piece);
             return piece.color;
         }
     }
@@ -56,6 +56,14 @@ class BoardData {
             else {
                 return "white";
             }
+        }
+    }
+    capture(row, coll) {
+        console.log("hey");
+        const piece = boardData.getPiece(row, coll)
+        if (piece !== undefined) {
+            removeImage(board.rows[row].cells[coll]);
+            this.removePiece(row, coll);
         }
     }
 }
@@ -91,14 +99,7 @@ function tryMove(row, coll, piece) {
         getKnightMoves(row, coll, moveArray);
     }
 }
-function capture(row, coll) {
-    console.log("hey");
-    const piece = boardData.getPiece(row, coll)
-    if (piece !== undefined) {
-        removeImage(board.rows[row].cells[coll]);
-        removePiece(row, coll);
-    }
-}
+
 function cellClick(e, row, coll) {
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
@@ -123,7 +124,7 @@ function cellClick(e, row, coll) {
             const piece = boardData.getPiece(lastRow, lastColl)
             if (piece !== undefined) {
                 if (boardData.turn(piece) === piece.color) {
-                    capture(row, coll, piece);
+                    boardData.capture(row, coll, piece);
                     checked++;
                     piece.row = moveRow;
                     piece.coll = moveColl;
