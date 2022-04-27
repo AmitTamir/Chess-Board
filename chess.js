@@ -7,6 +7,7 @@ let lastRow;
 let lastColl;
 let moveRow;
 let moveColl;
+let winner = 0;
 const PIECES = [" r", " kn", " b", " q", " k", " b", " kn", " r"]
 const knightMoves = [[-2, -1, 1], [2, -1, 1],]
 let checked = 0;
@@ -62,8 +63,13 @@ class BoardData {
         console.log("hey");
         const piece = boardData.getPiece(row, coll)
         if (piece !== undefined) {
+            if (piece.type == " k") {
+                winner++;
+                popUp(piece.color);
+            }
             removeImage(board.rows[row].cells[coll]);
             this.removePiece(row, coll);
+
         }
     }
 }
@@ -109,34 +115,37 @@ function cellClick(e, row, coll) {
             }
         }
     }
-    const piece = boardData.getPiece(row, coll)
-    if (piece !== undefined) {
-        if (boardData.turn(piece) === piece.color) {
-            tryMove(row, coll, piece);
-        }
-    }
     selected = e.currentTarget;
     selected.classList.add('clicked');
-    for (let move of moveArray) {
-        moveRow = parseInt(move.id.charAt(0));
-        moveColl = parseInt(move.id.charAt(2));
-        if (moveRow === row && moveColl === coll) {
-            const piece = boardData.getPiece(lastRow, lastColl)
-            if (piece !== undefined) {
-                if (boardData.turn(piece) === piece.color) {
-                    boardData.capture(row, coll, piece);
-                    checked++;
-                    piece.row = moveRow;
-                    piece.coll = moveColl;
-                    getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
-                    removeImage(board.rows[lastRow].cells[lastColl]);
+    if (winner === 0) {
+        const piece = boardData.getPiece(row, coll)
+        if (piece !== undefined) {
+            if (boardData.turn(piece) === piece.color) {
+                tryMove(row, coll, piece);
+            }
+        }
+
+        for (let move of moveArray) {
+            moveRow = parseInt(move.id.charAt(0));
+            moveColl = parseInt(move.id.charAt(2));
+            if (moveRow === row && moveColl === coll) {
+                const piece = boardData.getPiece(lastRow, lastColl)
+                if (piece !== undefined) {
+                    if (boardData.turn(piece) === piece.color) {
+                        boardData.capture(row, coll, piece);
+                        checked++;
+                        piece.row = moveRow;
+                        piece.coll = moveColl;
+                        getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
+                        removeImage(board.rows[lastRow].cells[lastColl]);
+                    }
                 }
             }
         }
-    }
 
-    lastRow = row;
-    lastColl = coll;
+        lastRow = row;
+        lastColl = coll;
+    }
 }
 
 function getImage(cell, type, kind) {
@@ -148,6 +157,12 @@ function removeImage(cell) {
     console.log(cell);
     cell.removeChild(cell.getElementsByTagName("img")[0]);
 
+}
+function popUp(color) {
+    const winnerPopUp = document.createElement("div");
+    winnerPopUp.textContent = color + " wins";
+    winnerPopUp.classList.add("popUp")
+    board.appendChild(winnerPopUp);
 }
 function getInitialBoard() {
     let result = [];

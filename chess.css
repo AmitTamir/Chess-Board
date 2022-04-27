@@ -4,6 +4,7 @@
     border-spacing: 1px;
     position: relative;
     border: solid black 1px;
+    margin: auto;
 }
 
 .light {
@@ -11,7 +12,7 @@
     width: 50px;
     height: 50px;
     border: 1px solid black;
-
+    user-select: none;
 }
 
 .dark {
@@ -19,7 +20,7 @@
     width: 50px;
     height: 50px;
     border: 1px solid black;
-
+    user-select: none;
 }
 
 .clicked {
@@ -28,4 +29,21 @@
 
 .possible-move {
     background-color: rgb(235, 238, 77);
+}
+
+.popUp {
+    font-size: large;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 50px;
+    background-color: white;
+    border: 10px solid black;
+    width: max-content;
+    position: absolute;
+    text-transform: capitalize;
+}
+
+.title {
+    text-align: center;
 }
