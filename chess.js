@@ -32,10 +32,11 @@ class BoardData {
 
     }
     removePiece(row, coll) {
+        console.log("hey");
         for (let i = 0; i < pieces.length; i++) {
             let piece = pieces[i];
             if (piece.row === row && piece.coll === coll) {
-                // Remove piece at index i
+                console.log("hello");
                 pieces.splice(i, 1);
             }
         }
@@ -60,16 +61,16 @@ class BoardData {
         }
     }
     capture(row, coll) {
-        console.log("hey");
         const piece = boardData.getPiece(row, coll)
         if (piece !== undefined) {
             if (piece.type == " k") {
                 winner++;
-                popUp(piece.color);
+                popUp(this.opositeColor(piece.row, piece.coll));
             }
-            removeImage(board.rows[row].cells[coll]);
+            console.log(pieces);
             this.removePiece(row, coll);
-
+            removeImage(board.rows[row].cells[coll]);
+            console.log(pieces);
         }
     }
 }
@@ -132,14 +133,15 @@ function cellClick(e, row, coll) {
                 const piece = boardData.getPiece(lastRow, lastColl)
                 if (piece !== undefined) {
                     if (boardData.turn(piece) === piece.color) {
-                        boardData.capture(row, coll, piece);
-                        checked++;
-                        piece.row = moveRow;
-                        piece.coll = moveColl;
-                        getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
-                        removeImage(board.rows[lastRow].cells[lastColl]);
+                        boardData.capture(row, coll);
+
                     }
                 }
+                checked++;
+                piece.row = row;
+                piece.coll = coll;
+                getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
+                removeImage(board.rows[lastRow].cells[lastColl]);
             }
         }
 
@@ -154,7 +156,6 @@ function getImage(cell, type, kind) {
     cell.appendChild(image);
 }
 function removeImage(cell) {
-    console.log(cell);
     cell.removeChild(cell.getElementsByTagName("img")[0]);
 
 }

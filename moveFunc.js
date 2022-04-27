@@ -295,9 +295,9 @@ function getRookMoves(row, coll, moveArray) {
             else {
                 break;
             }
-            temp1++;
-            temp2--;
         }
+        temp1++;
+        temp2--;
     }
     return moveArray;
 }
