@@ -5,22 +5,32 @@
     position: relative;
     border: solid black 1px;
     margin: auto;
+    table-layout: fixed;
+}
+
+img {
+    height: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+td {
+    position: relative;
+    box-sizing: border-box;
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    user-select: none;
 }
 
 .light {
     background-color: rgb(214, 214, 214);
-    width: 50px;
-    height: 50px;
-    border: 1px solid black;
-    user-select: none;
 }
 
 .dark {
     background-color: rgb(85, 84, 84);
-    width: 50px;
-    height: 50px;
-    border: 1px solid black;
-    user-select: none;
 }
 
 .clicked {

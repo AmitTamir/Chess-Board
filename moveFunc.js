@@ -223,7 +223,6 @@ function getBishopMoves(row, coll, moveArray) {
     return moveArray;
 }
 function getRookMoves(row, coll, moveArray) {
-    console.log("rock moves");
     temp1 = coll + 1;
     temp2 = coll - 1;
     for (let i = 0; i < 7; i++) {
@@ -240,10 +239,7 @@ function getRookMoves(row, coll, moveArray) {
             }
         }
         temp1++;
-        temp2--;
     }
-    temp1 = coll + 1;
-    temp2 = coll - 1;
     for (let i = 0; i < 7; i++) {
         if (temp2 > -1) {
             if (boardData.possibleMove(row, temp2) === undefined || boardData.possibleMove(row, temp2) === boardData.opositeColor(row, coll)) {
@@ -257,7 +253,6 @@ function getRookMoves(row, coll, moveArray) {
                 break;
             }
         }
-        temp1++;
         temp2--;
     }
 
