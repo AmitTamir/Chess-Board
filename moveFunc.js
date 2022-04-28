@@ -65,7 +65,7 @@ function getBlackPawnMoves(row, col, moveArray) {
     if (row + 1 < 8) {
         if (col + 1 < 8) {
             if (boardData.possibleMove(row + 1, col + 1) === boardData.opositeColor(row, col)) {
-                pushCellToMoveArray(row + i, col + 1);
+                pushCellToMoveArray(row + 1, col + 1);
             }
         }
         if (col - 1 > -1) {
