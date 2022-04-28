@@ -4,7 +4,7 @@ let board;
 let boardData;
 let moveArray = [];
 let lastRow;
-let lastColl;
+let lastCol;
 let moveRow;
 let moveColl;
 let winner = 0;
@@ -15,9 +15,9 @@ class BoardData {
   constructor(pieces) {
     this.pieces = pieces;
   }
-  getPiece(row, coll) {
+  getPiece(row, col) {
     for (const piece of this.pieces) {
-      if (piece.row === row && piece.coll === coll) {
+      if (piece.row === row && piece.col === col) {
         return piece;
       }
     }
@@ -30,10 +30,10 @@ class BoardData {
       return "black";
     }
   }
-  removePiece(row, coll) {
+  removePiece(row, col) {
     for (let i = 0; i < this.pieces.length; i++) {
       let piece = this.pieces[i];
-      if (piece.row === row && piece.coll === coll) {
+      if (piece.row === row && piece.col === col) {
         // Remove piece at index i
         this.pieces.splice(i, 1);
         console.log(this.pieces);
@@ -41,14 +41,14 @@ class BoardData {
       }
     }
   }
-  possibleMove(row, coll) {
-    const piece = this.getPiece(row, coll)
+  possibleMove(row, col) {
+    const piece = this.getPiece(row, col)
     if (piece !== undefined) {
       return piece.color;
     }
   }
-  opositeColor(row, coll) {
-    const piece = this.getPiece(row, coll)
+  opositeColor(row, col) {
+    const piece = this.getPiece(row, col)
     if (piece !== undefined) {
       if (piece.color === "white") {
         return "black";
@@ -58,87 +58,87 @@ class BoardData {
       }
     }
   }
-  capture(row, coll) {
+  capture(row, col) {
     console.log("hey");
-    const piece = boardData.getPiece(row, coll)
+    const piece = boardData.getPiece(row, col)
     if (piece !== undefined) {
       if (piece.type == " k") {
         winner++;
-        popUp(this.opositeColor(piece.row, piece.coll));
+        popUp(this.opositeColor(piece.row, piece.col));
       }
-      board.rows[row].cells[coll].innerHTML = "";
-      this.removePiece(row, coll);
+      board.rows[row].cells[col].innerHTML = "";
+      this.removePiece(row, col);
     }
   }
 }
 class Piece {
-  constructor(row, coll, type, color) {
+  constructor(row, col, type, color) {
     this.row = row;
-    this.coll = coll;
+    this.coll = col;
     this.type = type;
     this.color = color;
   }
 }
-function tryMove(row, coll, piece) {
+function tryMove(row, col, piece) {
   moveArray = [];
   if (piece.type === " r") {
-    getRookMoves(row, coll, moveArray);
+    getRookMoves(row, col, moveArray);
   }
   else if (piece.type === " q") {
-    getQueenMoves(row, coll, moveArray);
+    getQueenMoves(row, col, moveArray);
   }
   else if (piece.type === " b") {
-    getBishopMoves(row, coll, moveArray);
+    getBishopMoves(row, col, moveArray);
   }
   else if (piece.type === " p" && piece.color === "white") {
-    getWhitePawnMoves(row, coll, moveArray);
+    getWhitePawnMoves(row, col, moveArray);
   }
   else if (piece.type === " p" && piece.color === "black") {
-    getBlackPawnMoves(row, coll, moveArray);
+    getBlackPawnMoves(row, col, moveArray);
   }
   else if (piece.type === " k") {
-    getKingMoves(row, coll, moveArray);
+    getKingMoves(row, col, moveArray);
   }
   else if (piece.type === " kn") {
-    getKnightMoves(row, coll, moveArray);
+    getKnightMoves(row, col, moveArray);
   }
 }
-function cellClick(row, coll) {
+function cellClick(row, col) {
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       board.rows[i].cells[j].classList.remove('possible-move');
       board.rows[i].cells[j].classList.remove('clicked');
     }
   }
-  selected = board.rows[row].cells[coll];
+  selected = board.rows[row].cells[col];
   selected.classList.add('clicked');
   if (winner === 0) {
-    const piece = boardData.getPiece(row, coll)
+    const piece = boardData.getPiece(row, col)
     if (piece !== undefined) {
       if (boardData.turn(piece) === piece.color) {
-        tryMove(row, coll, piece);
+        tryMove(row, col, piece);
       }
     }
     for (let move of moveArray) {
       moveRow = parseInt(move.id.charAt(0));
-      moveColl = parseInt(move.id.charAt(2));
-      if (moveRow === row && moveColl === coll) {
-        const piece = boardData.getPiece(lastRow, lastColl)
+      moveCol = parseInt(move.id.charAt(2));
+      if (moveRow === row && moveCol === col) {
+        const piece = boardData.getPiece(lastRow, lastCol)
         console.log(piece);
         if (piece !== undefined) {
           if (boardData.turn() === piece.color) {
-            boardData.capture(row, coll, piece);
+            boardData.capture(row, col, piece);
             checked++;
             piece.row = moveRow;
-            piece.coll = moveColl;
-            getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
-            board.rows[lastRow].cells[lastColl].innerHTML = "";
+            piece.coll = moveCol;
+            getImage(board.rows[piece.row].cells[piece.col], piece.color, piece.type);
+            board.rows[lastRow].cells[lastCol].innerHTML = "";
           }
         }
       }
     }
     lastRow = row;
-    lastColl = coll;
+    lastCol = col;
   }
 }
 
@@ -187,7 +187,7 @@ function createChessBoard() {
   boardData = new BoardData(getInitialBoard());
   pieces = getInitialBoard();
   for (let piece of pieces) {
-    getImage(board.rows[piece.row].cells[piece.coll], piece.color, piece.type);
+    getImage(board.rows[piece.row].cells[piece.col], piece.color, piece.type);
   }
 }
 window.addEventListener('load', createChessBoard);
