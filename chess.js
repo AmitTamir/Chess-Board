@@ -8,6 +8,7 @@ let lastColl;
 let moveRow;
 let moveColl;
 let winner = 0;
+let doubleMove = 2;
 const PIECES = [" r", " kn", " b", " q", " k", " b", " kn", " r"]
 // const knightMoves = [[-2, -1, 1], [2, -1, 1],]
 let checked = 0;

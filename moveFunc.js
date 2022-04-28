@@ -5,7 +5,10 @@ function getQueenMoves(row, coll, moveArray) {
 }
 
 function getWhitePawnMoves(row, coll, moveArray) {
-    for (let i = -1; i > -2; i--) {
+    if(row===6){
+        doubleMove=3
+    }
+    for (let i = -1; i > -doubleMove; i--) {
         if (row + i > -1) {
             if (boardData.possibleMove(row + i, coll) === undefined) {
                 moveArray.push(document.getElementById(`${row + i}-${coll}`));
@@ -34,7 +37,10 @@ function getWhitePawnMoves(row, coll, moveArray) {
     return moveArray;
 }
 function getBlackPawnMoves(row, coll, moveArray) {
-    for (let i = 1; i < 2; i++) {
+    if(row===1){
+        doubleMove=3
+    }
+    for (let i = 1; i < doubleMove; i++) {
         if (row + i < 8) {
             if (boardData.possibleMove(row + i, coll) === undefined) {
                 moveArray.push(document.getElementById(`${row + i}-${coll}`));
