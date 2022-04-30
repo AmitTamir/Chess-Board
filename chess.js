@@ -122,26 +122,28 @@ function cellClick(row, col) {
   selectedCell = board.rows[row].cells[col];
   selectedCell.classList.add('clicked');
   if (winner === false) {
-    //return an array with possible moves and paint them.
+    //fill the moveArray with possible moves and paint them.
     const piece = boardData.getPiece(row, col);
     if (piece !== undefined) {
       if (boardData.turn() === piece.color) {
         getPieceMoves(row, col, piece);
       }
     }
-    //check if the clicked cell is a valid move, if it is, its done.
+    //check if the clicked cell is a valid move, if it is, the move is done.
     for (let move of moveArray) {
       let moveRow = parseInt(move.id.charAt(0));
       let moveCol = parseInt(move.id.charAt(2));
       if (moveRow === row && moveCol === col) {
         const piece = boardData.getPiece(lastRow, lastCol);
-        if (boardData.turn() === piece.color) {
-          boardData.capture(row, col);
-          turns++;
-          piece.row = moveRow;
-          piece.col = moveCol;
-          getImage(board.rows[piece.row].cells[piece.col], piece.color, piece.type);
-          board.rows[lastRow].cells[lastCol].innerHTML = "";
+        if (piece !== undefined) {
+          if (boardData.turn() === piece.color) {
+            boardData.capture(row, col);
+            turns++;
+            piece.row = moveRow;
+            piece.col = moveCol;
+            getImage(board.rows[piece.row].cells[piece.col], piece.color, piece.type);
+            board.rows[lastRow].cells[lastCol].innerHTML = "";
+          }
         }
       }
     }

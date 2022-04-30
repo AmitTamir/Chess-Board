@@ -14,8 +14,6 @@ function getWhitePawnMoves(row, col, moveArray) {
     for (let i = -1; i > -doubleMove; i--) {
         if (row + i > -1) {
             if (boardData.possibleMove(row + i, col) === undefined) {//check if the cell is empty
-                // moveArray.push(document.getElementById(`${row + i}-${col}`)); //push the cell ID to the moveArray
-                // document.getElementById(`${row + i}-${col}`).classList.add("possible-move");
                 pushCellToMoveArray(row + i, col);
             }
 
@@ -41,7 +39,6 @@ function getWhitePawnMoves(row, col, moveArray) {
             }
         }
     }
-    return moveArray;
 }
 
 function getBlackPawnMoves(row, col, moveArray) {
@@ -74,7 +71,6 @@ function getBlackPawnMoves(row, col, moveArray) {
             }
         }
     }
-    return moveArray;
 }
 
 function getKingMoves(row, col, moveArray) {
@@ -89,20 +85,19 @@ function getKingMoves(row, col, moveArray) {
             }
         }
     }
-    return moveArray;
 }
 
 function getKnightMoves(row, col, moveArray) {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 2; j++) {
             if (row + KNIGHT_MOVES[i][j] > -1 && row + KNIGHT_MOVES[i][j] < 8 && col + KNIGHT_MOVES[i][j + 2] > -1 && col + KNIGHT_MOVES[i][j + 2] < 8) {
-                if (boardData.possibleMove(row + KNIGHT_MOVES[i][j], col + KNIGHT_MOVES[i][j + 2]) === undefined || boardData.possibleMove(row + KNIGHT_MOVES[i][j], col + KNIGHT_MOVES[i][j + 2]) === boardData.opositeColor(row, col)) {
+                if (boardData.possibleMove(row + KNIGHT_MOVES[i][j], col + KNIGHT_MOVES[i][j + 2]) === undefined
+                    || boardData.possibleMove(row + KNIGHT_MOVES[i][j], col + KNIGHT_MOVES[i][j + 2]) === boardData.opositeColor(row, col)) {
                     pushCellToMoveArray(row + KNIGHT_MOVES[i][j], col + KNIGHT_MOVES[i][j + 2]);
                 }
             }
         }
     }
-    return moveArray;
 }
 
 function getBishopMoves(row, col, moveArray) {
@@ -170,7 +165,6 @@ function getBishopMoves(row, col, moveArray) {
             temp2--;
         }
     }
-    return moveArray;
 }
 
 function getRookMoves(row, col, moveArray) {
@@ -230,5 +224,4 @@ function getRookMoves(row, col, moveArray) {
             }
         }
     }
-    return moveArray;
 }
